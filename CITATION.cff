@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use this benchmark, please cite it as below, and cite Q-MAML (Lee, Cho & Kim, AAAI 2025)."
+title: "qmaml-hep: a controlled benchmark of learned initialization for variational quantum circuits on HEP Hamiltonians"
+authors:
+  - family-names: Kapoor
+    given-names: Arnav
+    affiliation: Indian Institute of Science Education and Research Bhopal
+version: 0.2.0
+license: MIT
+repository-code: "https://github.com/arnavk23/qmaml-hep"
+references:
+  - type: conference-paper
+    title: "Q-MAML: Quantum Model-Agnostic Meta-Learning for Variational Quantum Algorithms"
+    authors:
+      - family-names: Lee
+        given-names: Junyong
+      - family-names: Cho
+        given-names: JeiHee
+      - family-names: Kim
+        given-names: Shiho
+    conference:
+      name: AAAI 2025
+    identifiers:
+      - type: other
+        value: "arXiv:2501.05906"

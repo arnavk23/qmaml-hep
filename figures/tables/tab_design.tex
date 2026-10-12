@@ -1,0 +1,17 @@
+\begin{tabular}{@{}llcclccclcccc@{}}
+\toprule
+Tr. & System & $n$ & $\dim\mathcal{H}$ & Ansatz & $L$ & $P$ & $d$ & Task range (uniform) & train/test & $B$ & $\eta'$ & epochs/$\eta$ \\
+\midrule
+A & Schwinger model, $L{=}2$ & 4 & $2^{4}$ & HEA & 3 & 36 & 2 & $m_0\in[0,1.5]$, $g\in[0.3,2]$ & 16/6 & 300 & 0.02 & 40/0.005 \\
+B & $\mathbb{Z}_2$ LGT, penalty (HEA) & 8 & $2^{8}$ & HEA & 3 & 72 & 3 & $J,m,\mu\in[0.1,2]$; $V{=}10$ & 16/6 & 300 & 0.02 & 40/0.005 \\
+B & $\mathbb{Z}_2$ LGT, gauge-inv.\ (HVA) & 8 & $2^{8}$ & HVA & 3 & 45 & 3 & $J,m,\mu\in[0.1,2]$; $V{=}10$ & 16/6 & 300 & 0.02 & 40/0.005 \\
+C & $\phi^4$ scalar field & 6 & $2^{6}$ & HEA & 3 & 54 & 2 & $m_0^2\in[-2.5,1]$, $\lambda_0\in[0.5,1.5]$ & 16/6 & 300 & 0.02 & 40/0.005 \\
+D & SU(2) LGT, $N{=}2$ & 4 & $2^{4}$ & HEA & 4 & 48 & 2 & $\tilde m\in[0.1,2]$, $x\in[0.2,5]$ & 16/6 & 250 & 0.05 & 40/0.01 \\
+E & Collective neutrinos, $N{=}4$ & 4 & $2^{4}$ & HEA & 3 & 36 & 2 & $\theta\in[0.05,0.7]$, $\mu\in[0.1,3]$ & 16/6 & 200 & 0.05 & 40/0.01 \\
+F & SUSY QM & 4 & $2^{4}$ & HEA & 3 & 36 & 6 & $W\in\{$HO,AHO,DW$\}$; $m,g,\mu\in[0.5,1.5]$ & 18/9 & 200 & 0.05 & 40/0.01 \\
+G & $\mathbb{D}_8$ LGT & 7 & $2^{7}$ & HEA & 3 & 63 & 3 & $M,\lambda_E,\epsilon\in[0.2,2]$ & 16/6 & 200 & 0.05 & 40/0.01 \\
+H & Light nuclei (pionless EFT) & 8 & $2^{8}$ & UCCSD & 2 & 4/8/8 & 6 & $^2$H/$^3$H/$^3$He; $t\in[0.5,2]$, $C\in[-2,-0.2]$, $D\in[-1,1]$ & 18/9 & 150 & 0.1 & 30/0.05 \\
+I & Scalar Yukawa & 4 & $2^{4}$ & HEA & 3 & 36 & 2 & $\eta\in[0.2,1]$, $m\in[1,2]$ & 16/6 & 150 & 0.05 & 40/0.01 \\
+J & LMG, $J{=}3/2$ & 2 & $2^{2}$ & HEA & 3 & 18 & 2 & $\epsilon\in[0.5,2]$, $V\in[-1.5,1.5]$ & 16/6 & 150 & 0.05 & 40/0.01 \\
+\botrule
+\end{tabular}
