@@ -1,0 +1,17 @@
+\begin{tabular}{@{}llp{0.34\textwidth}p{0.35\textwidth}@{}}
+\toprule
+Tr. & System & Question answered by the ground state & Verification before use \\
+\midrule
+A & Schwinger model, $L{=}2$ & Vacuum of 1+1D QED (lattice Schwinger model, gauge field eliminated); its energy vs.\ $(m_0,g)$ tracks the chiral condensate/confinement regime. & Hermiticity; Coulomb term checked against a brute-force dense construction ($n\le8$). \\
+B & $\mathbb{Z}_2$ LGT, penalty (HEA) & Vacuum of a single-plaquette $\mathbb{Z}_2$ gauge theory with matter in the physical (charge-free) Gauss sector, enforced by an energy penalty. & $G_l^2=\mathbb{1}$ and $[H,G_l]=0$ for all four sites; exact ground state lies in the $q_l{=}{+}1$ sector. \\
+B & $\mathbb{Z}_2$ LGT, gauge-inv.\ (HVA) & Same Hamiltonian; ansatz is gauge-invariant by construction (Trotterized physical terms from the Gauss vacuum). & As above; every ansatz generator commutes with every $G_l$. \\
+C & $\phi^4$ scalar field & Ground state of 2-site $\phi^4$ theory across the symmetric/broken-symmetry crossover. & $\Phi,\Pi$ Hermitian; free-field spectrum matches $\mu(n+\frac12)$ to $<5\%$ for the lowest levels. \\
+D & SU(2) LGT, $N{=}2$ & Vacuum of SU(2) LGT with staggered fermions (gauge field integrated out), the reference state for hadron masses. & Hermiticity at several $(\tilde m,x)$; 4-body colour-exchange term checked against an independent dense $\sigma^\pm$ construction ($10^{-16}$). \\
+E & Collective neutrinos, $N{=}4$ & Adiabatic (co-rotating) ground state of the collective two-flavour neutrino Hamiltonian; reformulation of a real-time problem. & Hermiticity; $\mu{=}0$ spectrum equals the analytic single-particle one; $\theta{=}\mu{=}0$ ground state is $|1\ldots1\rangle$. \\
+F & SUSY QM & Whether SUSY is broken: $E_0{=}0$ (unbroken, HO/AHO) vs.\ $E_0{>}0$ (broken, DW). & Hermiticity; HO spectrum; DW potential has two minima (sign convention checked on a grid). \\
+G & $\mathbb{D}_8$ LGT & Ground state of a non-Abelian $\mathbb{D}_8$ gauge theory with fermionic matter (2 sites, 1 link). & Representation check $D(g_1)D(g_2)=D(g_1g_2)$ over all 64 pairs (caught a real bug); unitarity; $j{=}2$ projector idempotent of rank 4; JW anticommutation. \\
+H & Light nuclei (pionless EFT) & Binding energies of $^2$H, $^3$H, $^3$He in lattice pionless EFT. & Hermiticity; $[H,N_p]=[H,N_n]=0$; bound (negative-energy) state exists in each sector. \\
+I & Scalar Yukawa & Dressed fermion-vacuum ground state under scalar Yukawa coupling; reformulation of a quench problem. & Vacuum-sector energy vs.\ closed form $-(\eta/2)^2/m$ ($<1\%$ in range); ground state has zero fermion occupation. \\
+J & LMG, $J{=}3/2$ & Collective ground state of the LMG model (nuclear structure benchmark, not HEP). & Hermiticity; su(2) algebra of the generators; $V{=}0$ limit $E_0=-\epsilon J$. \\
+\botrule
+\end{tabular}
