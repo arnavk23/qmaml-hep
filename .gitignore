@@ -1,0 +1,19 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+.ruff_cache/
+build/
+dist/
+
+# downloaded datasets (fetched on first use)
+data/
+
+# superseded or partial outputs
+results/unified_superseded/
+results/paper_replication/*_shard*of*.json
+
+.DS_Store
+.idea/
+.vscode/

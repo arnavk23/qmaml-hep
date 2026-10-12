@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qmaml-hep"
+version = "0.2.0"
+description = "Learned initialization (Q-MAML) for variational quantum circuits on HEP Hamiltonians, benchmarked against classical and warm-start baselines"
+readme = "README.md"
+license = "MIT"
+authors = [{ name = "Arnav Kapoor", email = "arnavkapoor23@iiserb.ac.in" }]
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "torch>=2.2",
+    "pennylane>=0.38",
+    "pandas>=2.0",
+    "scikit-learn>=1.3",
+]
+
+[project.optional-dependencies]
+plots = ["matplotlib>=3.8"]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[project.urls]
+Repository = "https://github.com/arnavk23/qmaml-hep"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E501", "E701", "E702", "E731", "E741", "B023", "B905", "UP006", "UP035"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["qmaml_hep"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["slow: end-to-end runs (minutes); deselect with -m 'not slow'"]
