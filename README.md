@@ -84,7 +84,7 @@ git clone https://github.com/arnavk23/qmaml-hep && cd qmaml-hep
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev,plots]"
 
-make test                      # fast suite, about 2 min: physics checks, simulators vs PennyLane, gradient flow, scoring
+make test                      # fast suite, 2–4 min: physics checks, simulators vs PennyLane, gradient flow, scoring
 python -m qmaml_hep.benchmark --track J_lmg --seeds 0      # one track, one seed, about 3 min on a laptop CPU
 python -m qmaml_hep.analysis                                # rescore everything in results/unified
 python scripts/make_figures.py && python scripts/make_tables.py

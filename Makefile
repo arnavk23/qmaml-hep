@@ -3,7 +3,7 @@
 install:        ## editable install with dev and plotting extras
 	pip install -e ".[dev,plots]"
 
-test:           ## fast suite (~2 min)
+test:           ## fast suite (2-4 min)
 	python -m pytest -q -m "not slow"
 
 test-all:       ## including end-to-end reproduction and the UCCSD simulator check (~6 min)
