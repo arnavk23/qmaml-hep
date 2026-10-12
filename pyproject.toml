@@ -42,4 +42,5 @@ known-first-party = ["qmaml_hep"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["src"]
 markers = ["slow: end-to-end runs (minutes); deselect with -m 'not slow'"]
