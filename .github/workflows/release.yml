@@ -29,7 +29,7 @@ jobs:
         run: |
           awk -v v="${GITHUB_REF_NAME#v}" '
             $0 ~ "^## \\[" v "\\]" {on=1; next}
-            on && /^## \[/ {exit}
+            on && (/^## \[/ || /^\[[0-9]/) {exit}
             on {print}' CHANGELOG.md > notes.md
           test -s notes.md || { echo "no CHANGELOG section for $GITHUB_REF_NAME"; exit 1; }
       - name: Create release
