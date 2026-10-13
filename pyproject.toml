@@ -4,12 +4,23 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "qmaml-hep"
-version = "0.2.0"
+version = "0.3.0"
 description = "Learned initialization (Q-MAML) for variational quantum circuits on HEP Hamiltonians, benchmarked against classical and warm-start baselines"
 readme = "README.md"
 license = "MIT"
 authors = [{ name = "Arnav Kapoor", email = "arnavkapoor23@iiserb.ac.in" }]
 requires-python = ">=3.10"
+keywords = ["variational quantum eigensolver", "meta-learning", "lattice gauge theory", "benchmark", "quantum machine learning"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Physics",
+]
 dependencies = [
     "numpy>=1.26",
     "scipy>=1.11",
@@ -21,10 +32,17 @@ dependencies = [
 
 [project.optional-dependencies]
 plots = ["matplotlib>=3.8"]
-dev = ["pytest>=8", "ruff>=0.6"]
+dev = ["pytest>=8", "pytest-cov>=5", "hypothesis>=6.100", "ruff>=0.6", "matplotlib>=3.8"]
+docs = ["mkdocs>=1.6,<2", "mkdocs-material>=9.5", "mkdocstrings[python]>=0.25"]
 
 [project.urls]
 Repository = "https://github.com/arnavk23/qmaml-hep"
+Documentation = "https://arnavk23.github.io/qmaml-hep"
+Changelog = "https://github.com/arnavk23/qmaml-hep/blob/main/CHANGELOG.md"
+
+[project.scripts]
+qmaml-benchmark = "qmaml_hep.benchmark:main"
+qmaml-score = "qmaml_hep.analysis:cli"
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -44,3 +62,10 @@ known-first-party = ["qmaml_hep"]
 testpaths = ["tests"]
 pythonpath = ["src"]
 markers = ["slow: end-to-end runs (minutes); deselect with -m 'not slow'"]
+
+[tool.coverage.run]
+source = ["qmaml_hep"]
+omit = ["*/experiments/*", "*/classification/higgs.py", "*/classification/quarkgluon.py"]
+
+[tool.coverage.report]
+exclude_lines = ["pragma: no cover", "if __name__ == .__main__.:"]

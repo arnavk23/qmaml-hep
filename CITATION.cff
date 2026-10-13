@@ -5,7 +5,7 @@ authors:
   - family-names: Kapoor
     given-names: Arnav
     affiliation: Indian Institute of Science Education and Research Bhopal
-version: 0.2.0
+version: 0.3.0
 license: MIT
 repository-code: "https://github.com/arnavk23/qmaml-hep"
 references:

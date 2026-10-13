@@ -4,6 +4,11 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   lint:
@@ -18,24 +23,68 @@ jobs:
       - run: ruff format --check src tests scripts
 
   test:
-    runs-on: ubuntu-latest
+    name: test (${{ matrix.os }}, py${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.12"]
+        os: [ubuntu-latest]
+        python-version: ["3.10", "3.12", "3.13"]
+        include:
+          - os: macos-latest
+            python-version: "3.12"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
-      - name: Install (CPU-only torch)
+      - name: Install CPU-only torch (Linux)
+        if: runner.os == 'Linux'
+        run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - name: Install
+        run: pip install -e ".[dev,plots]"
+      - name: Tests with coverage
+        run: pytest -m "not slow" --cov=qmaml_hep --cov-report=term-missing:skip-covered --cov-report=xml
+      - name: Coverage summary
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
         run: |
-          pip install torch --index-url https://download.pytorch.org/whl/cpu
-          pip install -e ".[dev,plots]"
-      - name: Tests
-        run: pytest -q -m "not slow"
-      - name: Figures and tables rebuild from committed results
+          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import xml.etree.ElementTree as ET
+          r = ET.parse("coverage.xml").getroot()
+          print(f"### Coverage: {100 * float(r.get('line-rate')):.1f}% of lines")
+          PY
+      - uses: actions/upload-artifact@v4
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
+        with:
+          name: coverage-xml
+          path: coverage.xml
+
+  artifacts:
+    name: figures and tables rebuild from committed results
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - run: pip install -e ".[plots]"
+      - name: Tables are byte-identical to the committed ones
         run: |
           python scripts/make_tables.py
           git diff --exit-code -- figures/tables
+      - name: Figures build
+        run: python scripts/make_figures.py
+
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install build twine
+      - run: python -m build
+      - run: twine check dist/*

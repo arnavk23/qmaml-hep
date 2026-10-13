@@ -10,6 +10,8 @@ Every number in the figures and tables is computed from the files in this direct
 | `classification_v2/<dataset>_q<n>_{tune,report}.json` | Hyperparameter selection on validation tasks, then test accuracy and log-loss for every arm over 10 seeds |
 | `barren_plateau_v2/{higgs,heisenberg}.json` | Gradient variance over live parameters versus qubit count, per initializer |
 | `paper_replication/*.json` | Paper-scale runs (12-qubit Heisenberg, 10-qubit LiH): E₀, pretraining loss, 2000-iteration curves |
+| `cross_platform/linux/unified/*.json` | Q-MAML-only reruns (`--only qmaml`) of six systems × five seeds in a second numerical environment |
+| `cross_platform/summary.json` | Stored vs rerun: per-seed iterations to threshold, per-seed and pooled Δ, and verdicts (`python -m qmaml_hep.experiments.cross_platform`) |
 
 File-name fields: `h1` and `h2` are the Learner's hidden-layer count (`h2` is the paper's architecture, `h1` the
 ablation). `_e<B>` marks compute-matched runs, which contain only the `qmaml` initializer; the analysis merges them

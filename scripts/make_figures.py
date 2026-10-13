@@ -15,6 +15,9 @@ import glob
 import json
 import os
 
+# fixed PDF timestamps, so regenerating unchanged figures produces byte-identical files
+os.environ.setdefault("SOURCE_DATE_EPOCH", "0")
+
 import matplotlib
 
 matplotlib.use("Agg")
@@ -402,6 +405,89 @@ def replication():
     plt.close(fig)
 
 
+TRACK_MARK = dict(zip(ORDER, "osDv^<>pPhX"))
+TRACK_COL = dict(
+    zip(ORDER, ["#0072B2", "#E69F00", "#009E73", "#CC79A7", "#D55E00", "#56B4E9", "#000000", "#999999",
+                "#882255", "#117733", "#AA4499"])
+)  # fmt: skip
+
+
+def interpolator(S, split="interp"):
+    """Initial relative error of Q-MAML against that of the track's best warm start, one point per held-out task."""
+    fig, (a, b) = plt.subplots(1, 2, figsize=(7.0, 2.7), gridspec_kw={"width_ratios": [1.15, 1]})
+    frac = []
+    for k in ORDER:
+        key = f"{k}_{split}_h2"
+        if key not in S or "warm" not in S[key]["comparisons"]:
+            continue
+        opp = S[key]["comparisons"]["warm"]["opponent"]
+        q, w = [], []
+        for r in load_runs(key):
+            for row in r["test"]:
+                sc = max(row["scale"], 1e-12)
+                q.append(max(abs(row["runs"]["qmaml"]["E"][0] - row["E0"]) / sc, 1e-9))
+                w.append(max(abs(row["runs"][opp]["E"][0] - row["E0"]) / sc, 1e-9))
+        q, w = np.array(q), np.array(w)
+        a.scatter(q, w, s=9, marker=TRACK_MARK[k], facecolor="none", edgecolor=TRACK_COL[k], lw=0.6,
+                  label=LABEL[k])  # fmt: skip
+        frac.append((k, float((w < q).mean()), len(q)))
+    lim = [1e-9, 3]
+    a.plot(lim, lim, color="k", lw=0.6)
+    a.axhline(TAU, color=C["grey"], ls=":", lw=0.6)
+    a.axvline(TAU, color=C["grey"], ls=":", lw=0.6)
+    a.set(xscale="log", yscale="log", xlim=lim, ylim=lim, xlabel="Q-MAML initial relative error",
+          ylabel="best warm start, initial relative error")  # fmt: skip
+    a.text(2e-9, 1e-1, "warm start\nstarts higher", fontsize=6, va="top")
+    a.text(2e-3, 3e-9, "warm start starts lower", fontsize=6)
+    a.legend(fontsize=5.5, ncol=2, loc="upper left", bbox_to_anchor=(1.0, 1.0), handletextpad=0.2, columnspacing=0.5)
+    ks, fs, ns = zip(*frac)
+    y = np.arange(len(ks))[::-1]
+    b.barh(y, fs, color=[TRACK_COL[k] for k in ks], height=0.65)
+    b.axvline(0.5, color="k", lw=0.6, ls="--")
+    b.set(yticks=y, yticklabels=[LABEL[k] for k in ks], xlim=(0, 1),
+          xlabel="fraction of held-out tasks where\nthe warm start begins closer")  # fmt: skip
+    for yi, f, n in zip(y, fs, ns):
+        inside = f > 0.75
+        b.text(f - 0.02 if inside else f + 0.02, yi, f"{f:.0%} (n={n})", va="center", fontsize=5.5,
+               ha="right" if inside else "left", color="white" if inside else "black")  # fmt: skip
+    fig.tight_layout()
+    fig.savefig(os.path.join(OUT, f"fig_interpolator_{split}.pdf"))
+    plt.close(fig)
+
+
+def cross_platform():
+    """Per-seed and pooled comparison of Q-MAML between two numerical environments (results/cross_platform)."""
+    path = os.path.join(R, "cross_platform", "summary.json")
+    if not os.path.exists(path):
+        return
+    X = json.load(open(path))
+    keys = [k for k in ORDER if f"{k}_interp_h2" in X]
+    fig, axes = plt.subplots(1, 2, figsize=(7.0, 0.42 * len(keys) + 0.9), sharey=True)
+    for ax, fam, title in zip(axes, ("classical", "warm"), ("vs best classical", "vs best warm start")):
+        for i, k in enumerate(keys):
+            c = X[f"{k}_interp_h2"]["comparisons"][fam]
+            yi = len(keys) - 1 - i
+            for j, (mk, col) in enumerate((("o", C["classical"]), ("s", C["qmaml"]))):
+                off = 0.14 if j == 0 else -0.14
+                ax.scatter(c["per_seed_mean_d"][j], np.full(len(c["per_seed_mean_d"][j]), yi + off), s=7,
+                           marker=mk, facecolor="none", edgecolor=col, lw=0.5, alpha=0.8)  # fmt: skip
+                lo, hi = c["ci"][j]
+                ax.plot([lo, hi], [yi + off] * 2, color=col, lw=1.2)
+                ax.plot(c["mean_d"][j], yi + off, marker=mk, color=col, ms=4,
+                        label=("environment 1 (stored)" if j == 0 else "environment 2 (rerun)") if i == 0 else None)  # fmt: skip
+                ax.text(1.02, yi + off, c["verdict"][j][0].upper(), transform=ax.get_yaxis_transform(), fontsize=6,
+                        va="center", color=col)  # fmt: skip
+        ax.axvline(0, color="k", lw=0.6)
+        ax.set_title(title, fontsize=7)
+        ax.set_xlabel("$\\Delta$ = log$_{10}$ iteration ratio (Q-MAML / opponent)")
+    axes[0].set_yticks(range(len(keys))[::-1], [LABEL[k] for k in keys])
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels, fontsize=6, loc="lower center", ncol=2, frameon=False)
+    fig.tight_layout(rect=(0, 0.07, 1, 1))
+    fig.savefig(os.path.join(OUT, "fig_cross_platform.pdf"))
+    plt.close(fig)
+
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     S = summary()
@@ -414,4 +500,6 @@ if __name__ == "__main__":
     classification()
     bp()
     replication()
+    interpolator(S)
+    cross_platform()
     print("figures written to", OUT)
