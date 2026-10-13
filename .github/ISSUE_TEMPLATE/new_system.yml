@@ -1,0 +1,18 @@
+name: Propose a new system or initializer
+description: Add a Hamiltonian family, an ansatz, or an initializer to the benchmark
+labels: [enhancement]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What would be added?
+      description: Hamiltonian (with a reference), task parameters and ranges, qubit count, ansatz, or initializer.
+    validations:
+      required: true
+  - type: textarea
+    id: verify
+    attributes:
+      label: How can it be verified before use?
+      description: Known limits, symmetries, analytic ground energies, or a reference implementation to compare with.
+    validations:
+      required: true

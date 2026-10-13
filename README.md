@@ -4,8 +4,13 @@
 faces the right baselines?**
 
 [![CI](https://github.com/arnavk23/qmaml-hep/actions/workflows/ci.yml/badge.svg)](https://github.com/arnavk23/qmaml-hep/actions/workflows/ci.yml)
-![Python](https://img.shields.io/badge/python-3.10%2B-blue)
+[![Docs](https://github.com/arnavk23/qmaml-hep/actions/workflows/docs.yml/badge.svg)](https://arnavk23.github.io/qmaml-hep/)
+[![Release](https://img.shields.io/github/v/release/arnavk23/qmaml-hep)](https://github.com/arnavk23/qmaml-hep/releases)
+![Python](https://img.shields.io/badge/python-3.10%E2%80%933.13-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
+
+**[Documentation](https://arnavk23.github.io/qmaml-hep/)** · **[Results](https://arnavk23.github.io/qmaml-hep/results/)** ·
+**[Releases](https://github.com/arnavk23/qmaml-hep/releases)** · **[Changelog](CHANGELOG.md)**
 
 This repository benchmarks **Q-MAML** (Lee, Cho & Kim, AAAI 2025, [arXiv:2501.05906](https://arxiv.org/abs/2501.05906)).
 Q-MAML trains a classical network that maps a Hamiltonian's parameters to the starting angles of a variational
@@ -20,12 +25,16 @@ initializer runs under one protocol, and the scoring rule is fixed in code befor
 - **Against warm starts built from the same training tasks** (the mean, nearest-neighbour, linear and kernel
   regression of stored optima), Q-MAML never wins. It loses to nearest-task transfer on the Schwinger model,
   collective neutrinos and the Yukawa model. On these 1–3-parameter families the Learner behaves as an
-  interpolator of optimal parameters.
+  interpolator of optimal parameters, and an inferior one: on nine of eleven configurations, the best warm start
+  begins closer to the ground state on most held-out tasks.
 - **Wins at base size do not survive to larger systems.** SU(2) at 8 qubits is a clear loss.
 - **On few-shot classification** (HIGGS, quark–gluon jets), Q-MAML is statistically indistinguishable from the same
   model without a Learner, and logistic regression on the same events is better.
 - **Equal compute does not help.** Giving Q-MAML's pretraining the same compute as the warm-start collection
   changes no verdict.
+- **Q-MAML results depend on the numerical environment.** Every other initializer reproduces bit for bit across
+  machines. Q-MAML's pretraining is chaotic: rerunning it with a different OS, PyTorch build or even thread count
+  changes per-seed results by up to 10× and flips 1 of 12 verdicts (LMG vs warm start: tie → loss).
 
 These are negative results, reported as such. The useful output is the controlled comparison itself, the
 protocol, and a benchmark suite where every circuit is checked against PennyLane.
@@ -54,6 +63,8 @@ intervals over 5 seeds × 6–9 tasks. The opponent is the best initializer of i
 so the track is scored on final error and is not informative about initialization. In-distribution split. The
 full table, with the extrapolation split, compute-matched variants and break-even task counts, is in
 [`figures/tables`](figures/tables).</sub>
+
+<p align="center"><img src="figures/interpolator_interp.png" width="760" alt="Initial error of Q-MAML against the best warm start, per held-out task"></p>
 
 ## How it works
 
@@ -84,9 +95,9 @@ git clone https://github.com/arnavk23/qmaml-hep && cd qmaml-hep
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev,plots]"
 
-make test                      # fast suite, 2–4 min: physics checks, simulators vs PennyLane, gradient flow, scoring
-python -m qmaml_hep.benchmark --track J_lmg --seeds 0      # one track, one seed, about 3 min on a laptop CPU
-python -m qmaml_hep.analysis                                # rescore everything in results/unified
+make test                      # fast suite, 2–4 min: physics, simulators vs PennyLane, gradient flow, statistics
+qmaml-benchmark --track J_lmg --seeds 0     # one track, one seed, about 3 min on a laptop CPU
+qmaml-score                                 # rescore everything in results/unified
 python scripts/make_figures.py && python scripts/make_tables.py
 ```
 
@@ -102,14 +113,16 @@ python scripts/make_figures.py && python scripts/make_tables.py
 | Classification | `python -m qmaml_hep.classification.protocol --dataset higgs --stage tune`, then `--stage report` | `results/classification_v2/` |
 | Gradient-variance scan | `python -m qmaml_hep.experiments.barren_plateau higgs` (or `heisenberg`) | `results/barren_plateau_v2/` |
 | Paper-scale replication | `python -m qmaml_hep.experiments.paper_replication heisenberg` (or `molecule`) | `results/paper_replication/` |
+| Cross-platform study | `QMAML_RESULTS=results/cross_platform/linux qmaml-benchmark --track <…> --seeds 0,1,2,3,4 --only qmaml`, then `python -m qmaml_hep.experiments.cross_platform` | `results/cross_platform/` |
 
 Track keys are listed in [`src/qmaml_hep/tracks.py`](src/qmaml_hep/tracks.py). Datasets download on first use into
 `data/`: a streamed subsample of UCI HIGGS, and the Komiske–Metodiev–Thaler quark–gluon jets from Zenodo. Every
 raw result file behind the paper is committed, and the generated tables match the manuscript's exactly.
 
-**Reproducibility caveat.** Q-MAML's pretraining is chaotic. The classical and warm-start runs reproduce exactly
-across machines, but Learner pretraining amplifies rounding differences between BLAS builds. A rerun on different
-hardware therefore gives different per-seed Q-MAML numbers. See [`docs/reproducibility.md`](docs/reproducibility.md).
+**Reproducibility caveat.** The classical and warm-start runs reproduce exactly anywhere. Q-MAML reproduces
+bit for bit only with the same OS, PyTorch build and thread count, because its pretraining amplifies rounding
+differences. Verdicts are mostly stable across environments, but per-seed numbers are not. See
+[`docs/reproducibility.md`](docs/reproducibility.md).
 
 ## Repository layout
 
@@ -124,12 +137,23 @@ src/qmaml_hep/
   systems/              Hamiltonians and reference circuits: schwinger, z2lgt, scalar, su2lgt, neutrino,
                         susyqm, d8lgt, nuclear, yukawa, lmg, heisenberg, molecule
   classification/       HIGGS and quark–gluon loaders, few-shot tasks, the classification protocol
-  experiments/          gradient-variance scan, paper-scale replication
-tests/                  physics, simulators vs PennyLane, gradient flow and dtypes, warm starts, scoring
+  experiments/          gradient-variance scan, paper-scale replication, cross-platform study
+tests/                  physics and symmetries, simulators vs PennyLane, property-based identities, gradient flow
+                        and dtypes, warm starts, statistical calibration, CLI, end-to-end and rescoring regression
 scripts/                figures and LaTeX tables, generated from results/ only
 results/                raw per-seed trajectories and summaries (see results/README.md)
-docs/                   gradient flow and dtypes, reproducibility
+docs/                   documentation site (MkDocs): protocol, systems, results, gradient flow, reproducibility, API
+.github/                CI (Linux + macOS, Python 3.10–3.13, coverage), weekly slow tests, docs, releases
 ```
+
+## Releases
+
+Each tagged release ships the wheel, the source distribution and a tarball of every raw result, with notes from
+[`CHANGELOG.md`](CHANGELOG.md). The release workflow runs on `git push origin vX.Y.Z`.
+
+## Contributing
+
+New Hamiltonian families, ansätze and initializers are welcome. See [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ## Citation
 
@@ -137,9 +161,3 @@ If you use this benchmark, please cite it via [`CITATION.cff`](CITATION.cff), an
 
 > J. Lee, J. Cho, S. Kim. *Q-MAML: Quantum Model-Agnostic Meta-Learning for Variational Quantum Algorithms.*
 > AAAI 2025. arXiv:2501.05906.
-
-## Acknowledgements
-
-Developed as a volunteer contribution to the ML4SCI Q-MAML project, with review from Junyong Lee (Yonsei
-University). It follows on from the project's GSoC 2025 codebase by Arnav Singhal. All code here is new; the
-benchmark, simulators and analysis were written from scratch.

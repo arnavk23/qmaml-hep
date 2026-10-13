@@ -17,3 +17,10 @@ results/paper_replication/*_shard*of*.json
 .DS_Store
 .idea/
 .vscode/
+
+# local tool state
+.claude/
+.hypothesis/
+coverage.xml
+.coverage
+site/

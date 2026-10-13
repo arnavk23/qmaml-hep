@@ -234,5 +234,10 @@ def main(pattern="*.json"):
     return out
 
 
-if __name__ == "__main__":
+def cli():
+    """Entry point: ``qmaml-score [glob]`` rescores results/unified/<glob> (default: every file)."""
     main(sys.argv[1] if len(sys.argv) > 1 else "*.json")
+
+
+if __name__ == "__main__":
+    cli()

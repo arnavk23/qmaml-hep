@@ -473,7 +473,8 @@ def check_fast(fast, orig, H, shape, kws=({},), seed=7):
         e2.backward()
         # relative to the energy / gradient scale: lightning.qubit evaluates Hamiltonian expectations in single
         # precision (~1e-7 relative), the fast simulator and default.qubit in double
-        de = abs(float(e1) - float(e2)) / max(1.0, abs(float(e2)))
+        e1, e2 = float(e1.detach()), float(e2.detach())
+        de = abs(e1 - e2) / max(1.0, abs(e2))
         dg = float((w1.grad - w2.grad).abs().max()) / max(1.0, float(w2.grad.abs().max()))
         print(f"  fast-simulator check {kw}: rel|dE|={de:.1e} rel max|dgrad|={dg:.1e}", flush=True)
         assert de < 1e-6 and dg < 1e-6, "fast simulator disagrees with the PennyLane circuit"

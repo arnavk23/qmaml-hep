@@ -1,0 +1,66 @@
+site_name: qmaml-hep
+site_description: A controlled benchmark of learned initialization (Q-MAML) for variational quantum circuits on HEP Hamiltonians
+site_url: https://arnavk23.github.io/qmaml-hep/
+repo_url: https://github.com/arnavk23/qmaml-hep
+repo_name: arnavk23/qmaml-hep
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - search.highlight
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      toggle: { icon: material/weather-night, name: Dark mode }
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      toggle: { icon: material/weather-sunny, name: Light mode }
+
+markdown_extensions:
+  - admonition
+  - tables
+  - attr_list
+  - pymdownx.superfences
+  - pymdownx.snippets:
+      base_path: ["."]
+      check_paths: true
+  - pymdownx.arithmatex:
+      generic: true
+
+extra_javascript:
+  - https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            docstring_style: google
+            show_source: true
+            show_root_heading: true
+            members_order: source
+            show_if_no_docstring: false
+
+nav:
+  - Home: index.md
+  - Getting started: getting-started.md
+  - Protocol: protocol.md
+  - Systems: systems.md
+  - Results: results.md
+  - Gradient flow and dtypes: gradient_flow.md
+  - Reproducibility: reproducibility.md
+  - API reference:
+      - Learner and initializers: api/core.md
+      - Simulators: api/simulators.md
+      - Benchmark and tracks: api/benchmark.md
+      - Scoring: api/analysis.md
+  - Contributing: contributing.md
+  - Changelog: changelog.md

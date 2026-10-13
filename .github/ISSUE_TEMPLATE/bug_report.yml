@@ -1,0 +1,26 @@
+name: Bug report
+description: Something is wrong with the code, a result, or the docs
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Minimal reproduction
+      description: Command or snippet, with the track key and seed if it concerns a benchmark run.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      description: Output of `python -c "import torch, pennylane, numpy, platform; print(platform.platform(), torch.__version__, pennylane.__version__, numpy.__version__)"`
+      render: text
+    validations:
+      required: true

@@ -1,0 +1,8 @@
+{
+  "title": "qmaml-hep: a controlled benchmark of learned initialization for variational quantum circuits on HEP Hamiltonians",
+  "upload_type": "software",
+  "creators": [{"name": "Kapoor, Arnav", "affiliation": "Indian Institute of Science Education and Research Bhopal"}],
+  "license": "MIT",
+  "keywords": ["variational quantum eigensolver", "meta-learning", "lattice gauge theory", "benchmark", "high-energy physics"],
+  "related_identifiers": [{"identifier": "arXiv:2501.05906", "relation": "cites", "scheme": "arxiv"}]
+}

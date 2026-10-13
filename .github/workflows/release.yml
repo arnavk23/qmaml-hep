@@ -1,0 +1,38 @@
+name: Release
+
+# Push a tag vX.Y.Z whose section exists in CHANGELOG.md. The release gets the wheel, the sdist and a tarball of
+# every raw result file, with the CHANGELOG section as its notes.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Version in the tag matches the package
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          pkg=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
+          test "$tag" = "$pkg" || { echo "tag $tag != pyproject version $pkg"; exit 1; }
+      - run: pip install build && python -m build
+      - name: Results archive
+        run: tar -cJf "dist/qmaml-hep-results-${GITHUB_REF_NAME}.tar.xz" results
+      - name: Release notes from CHANGELOG.md
+        run: |
+          awk -v v="${GITHUB_REF_NAME#v}" '
+            $0 ~ "^## \\[" v "\\]" {on=1; next}
+            on && /^## \[/ {exit}
+            on {print}' CHANGELOG.md > notes.md
+          test -s notes.md || { echo "no CHANGELOG section for $GITHUB_REF_NAME"; exit 1; }
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" dist/* --title "$GITHUB_REF_NAME" --notes-file notes.md
