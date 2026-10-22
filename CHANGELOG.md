@@ -3,6 +3,17 @@
 All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+- LHCO (m_X, m_Y) routes study (`qmaml_hep.classification.lhco`, `qmaml_hep.experiments.lhco_routes`,
+  `results/lhco_routes/`, `fig_lhco_routes`, `tab_lhco`): where should the task descriptor enter a variational
+  classifier? Nine arms on a 6-qubit circuit, three training-grid spacings, learning rates tuned on validation
+  points, five seeds, hierarchical bootstrap and Holm. Q-MAML beats nearest-mass transfer and masses as linear
+  inputs on the 100 and 150 GeV grids, ties an encoding hypernetwork, and loses about 2× to feeding the masses in
+  with the features (`param_deep`) and to the classical parameterised MLP. On the 200 GeV grid most comparisons tie.
+- `notes/lhco_feasibility/`: the feasibility checks and pilot that motivated the study.
+
 ## [0.3.0] - 2026-10-13
 
 ### Added

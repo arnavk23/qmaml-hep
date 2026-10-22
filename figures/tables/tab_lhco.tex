@@ -1,0 +1,15 @@
+\begin{tabular}{@{}llrrrrrc@{}}
+\toprule
+Arm & Masses enter via & Params & $\eta$ & 100 GeV & 150 GeV & 200 GeV & gap to BDT \\
+\midrule
+Q-MAML & $\theta=h_W(m)$ & 75868 & 0.003 & -- & -- & -- & $-0.41$ / $-0.63$ / $-1.24$ \\
+joint & nowhere & 92 & 0.01 & $+1.03$\,\textbf{W} & $+0.90$\,\textbf{W} & $+0.53$\,\textbf{W} & $-1.44$ / $-1.53$ / $-1.77$ \\
+param & linear encoding of $[x,m]$ & 104 & 0.01 & $+0.33$\,\textbf{W} & $+0.17$\,\textbf{W} & $-0.08$\,T & $-0.74$ / $-0.80$ / $-1.16$ \\
+nearest & nearest training mass & 92/mass & 0.003 & $+0.39$\,\textbf{W} & $+0.35$\,\textbf{W} & $+0.02$\,T & $-0.80$ / $-0.97$ / $-1.26$ \\
+hyper-enc & MLP$(m)$ sets the encoding & 77404 & 0.003 & $-0.02$\,T & $+0.08$\,T & $+0.20$\,\textbf{W} & $-0.39$ / $-0.71$ / $-1.44$ \\
+Q-MAML, deep & $\theta=h_W(m)$, MLP front end & 144952 & 0.001 & $-0.01$\,T & $+0.08$\,\textbf{W} & $+0.01$\,T & $-0.40$ / $-0.71$ / $-1.26$ \\
+joint, deep & nowhere, MLP front end & 69176 & 0.003 & $+1.02$\,\textbf{W} & $+1.02$\,\textbf{W} & $+0.72$\,\textbf{W} & $-1.43$ / $-1.65$ / $-1.96$ \\
+param-deep & MLP$([x,m])\to$ angles & 69688 & 0.003 & $-0.23$\,\textbf{L} & $-0.30$\,\textbf{L} & $-0.15$\,T & $-0.18$ / $-0.33$ / $-1.10$ \\
+classical MLP & MLP$([x,m])$, no circuit & 34434 & 0.003 & $-0.31$\,\textbf{L} & $-0.37$\,\textbf{L} & $-0.20$\,\textbf{L} & $-0.10$ / $-0.26$ / $-1.05$ \\
+\botrule
+\end{tabular}

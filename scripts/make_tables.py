@@ -4,6 +4,8 @@ tab_design.tex    per-track design: qubits, Hilbert dim, ansatz, depth, #angles 
 tab_physics.tex   per-track physics question answered by the ground state, and the pre-use verification
 tab_verdicts.tex  round-2 verdicts (iterations to 1e-3, hierarchical-bootstrap CI, Holm) from unified_summary.json
 tab_class.tex     classification (HIGGS 4/6/8, quark-gluon 6) from results/classification_v2
+tab_lhco.tex      LHCO (m_X, m_Y) routes: Q-MAML minus each arm per grid spacing, and each arm's gap to a per-point
+                  BDT, from results/lhco_routes
 """
 
 import os
@@ -160,11 +162,63 @@ def design():
     open(os.path.join(OUT, "tab_physics.tex"), "w", encoding="utf-8").write(tex)
 
 
+LHCO_ARMS = {  # arm: (label, where the masses enter)
+    "qmaml": ("Q-MAML", r"$\theta=h_W(m)$"),
+    "joint": ("joint", "nowhere"),
+    "param": ("param", r"linear encoding of $[x,m]$"),
+    "nearest": ("nearest", "nearest training mass"),
+    "hyper_enc": ("hyper-enc", r"MLP$(m)$ sets the encoding"),
+    "qmaml_deep": ("Q-MAML, deep", r"$\theta=h_W(m)$, MLP front end"),
+    "joint_deep": ("joint, deep", "nowhere, MLP front end"),
+    "param_deep": ("param-deep", r"MLP$([x,m])\to$ angles"),
+    "classical": ("classical MLP", r"MLP$([x,m])$, no circuit"),
+}
+
+
+def lhco():
+    """tab_lhco.tex: the LHCO routes study, Q-MAML against every arm at each grid spacing."""
+    import glob
+    import json
+
+    D = os.path.join(R, "lhco_routes")
+    if not os.path.exists(os.path.join(D, "selected_lr.json")):
+        return
+    lrs = json.load(open(os.path.join(D, "selected_lr.json")))
+    S = {sp: json.load(open(f)) for sp in (100, 150, 200) if os.path.exists(f := os.path.join(D, f"summary_sp{sp}_qmaml.json"))}  # fmt: skip
+    rows = []
+    for a, (label, route) in LHCO_ARMS.items():
+        f = sorted(glob.glob(os.path.join(D, f"report_sp100_{a}_lr{lrs[a]:g}_s*.json")))[0]
+        n = json.load(open(f)).get("n_params")
+        cells = []
+        for s in S.values():
+            r = next((r for r in s["comparisons"] if r["opponent"] == a), None)
+            if r is None:
+                cells.append("--")
+                continue
+            v = {"win": r"\textbf{W}", "loss": r"\textbf{L}", "tie": "T"}[r["verdict"]]
+            cells.append(f"${r['mean']:+.2f}$\\,{v}")  # the intervals are in fig_lhco_routes
+        gaps = " / ".join(f"${s['gap_to_oracle_bdt'][a]['mean']:+.2f}$" for s in S.values())
+        n = n if n else "92/mass"  # nearest: one joint-architecture circuit per training mass
+        rows.append(f"{label} & {route} & {n} & {lrs[a]:g} & " + " & ".join(cells) + f" & {gaps} \\\\")
+    ns = [f"{sp} GeV" for sp in S]
+    tex = (
+        r"\begin{tabular}{@{}llrr" + "r" * len(S) + "c@{}}\n\\toprule\n"
+        r"Arm & Masses enter via & Params & $\eta$ & "
+        + " & ".join(ns)
+        + r" & gap to BDT \\"
+        + "\n\\midrule\n"
+        + "\n".join(rows)
+        + "\n\\botrule\n\\end{tabular}\n"
+    )
+    open(os.path.join(OUT, "tab_lhco.tex"), "w", encoding="utf-8").write(tex)
+
+
 from result_tables import classification, compute_table, verdicts  # noqa: E402
 
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     design()
+    lhco()
     if os.path.exists(os.path.join(R, "unified_summary.json")):
         verdicts("interp")
         verdicts("extrap")

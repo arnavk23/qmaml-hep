@@ -1,0 +1,54 @@
+== check2 (big QCD; SR 2741928, test 1000000)
+oracle BDT over 144 pts: AUC 0.962-0.994 (median 0.985); rejection 939-15873 (median 5587)
+ step 100 held-out n=108: vs oracle  pNN -0.03 [-0.05, -0.02]  pBDT -0.66 [-0.87, -0.56]  nearest -0.82 [-0.97, -0.71] | pNN - nearest +0.82 [+0.66, +0.89]  pNN wins 1.00
+ step 100 train    n= 36: vs oracle  pNN -0.03 [-0.04, -0.01]  pBDT -0.18 [-0.20, -0.15]  nearest +0.00 [+0.00, +0.00] | pNN - nearest -0.03 [-0.04, -0.01]  pNN wins 0.28
+ step 150 held-out n=128: vs oracle  pNN -0.29 [-0.41, -0.21]  pBDT -1.08 [-1.22, -0.92]  nearest -1.00 [-1.16, -0.89] | pNN - nearest +0.58 [+0.53, +0.68]  pNN wins 0.98
+ step 150 train    n= 16: vs oracle  pNN -0.12 [-0.14, -0.10]  pBDT -0.11 [-0.19, -0.09]  nearest +0.00 [+0.00, +0.00] | pNN - nearest -0.12 [-0.14, -0.10]  pNN wins 0.00
+ vqc @100,100: oracle 3378/0.985  logreg 245/0.953  vqc_d2 2615/0.984 vqc_d4 2828/0.984 no_circuit 3066/0.985 mlp_32 3584/0.986   (rejection/AUC; params d2 92 d4 128 twin 92 mlp 1346)
+ vqc @300,300: oracle 15873/0.993  logreg 198/0.975  vqc_d2 11580/0.993 vqc_d4 13763/0.993 no_circuit 12020/0.993 mlp_32 14955/0.993   (rejection/AUC; params d2 92 d4 128 twin 92 mlp 1346)
+ vqc @150,450: oracle 7519/0.984  logreg 142/0.938  vqc_d2 6516/0.982 vqc_d4 7189/0.983 no_circuit 6132/0.982 mlp_32 7725/0.985   (rejection/AUC; params d2 92 d4 128 twin 92 mlp 1346)
+ vqc @500,200: oracle 6667/0.984  logreg 123/0.947  vqc_d2 4688/0.983 vqc_d4 5320/0.983 no_circuit 4556/0.981 mlp_32 6830/0.985   (rejection/AUC; params d2 92 d4 128 twin 92 mlp 1346)
+
+== Q-MAML pilot: 36 train points, 108 held-out; {'steps': 3000, 'tasks_per_step': 8, 'ev_per_task': 128, 'lr': 0.003, 'nq': 6, 'depth': 2}
+ zero-shot held-out n=108: median log10 R  joint 2.37 (AUC 0.943)  param 2.92 (AUC 0.970)  qmaml 3.23 (AUC 0.978)  nearest 3.00 (AUC 0.973)
+   qmaml - param  : +0.38 [+0.33, +0.47]  qmaml better on 0.81
+   qmaml - nearest: +0.27 [+0.15, +0.35]  qmaml better on 0.76
+   qmaml - joint  : +0.93 [+0.89, +1.02]  qmaml better on 1.00
+   qmaml   - pertask (n=16): -0.15 [-0.27, -0.10]
+   param   - pertask (n=16): -0.49 [-0.75, -0.26]
+   nearest - pertask (n=16): -0.28 [-0.90, -0.10]
+ zero-shot train n=36: median log10 R  joint 2.36 (AUC 0.947)  param 2.88 (AUC 0.968)  qmaml 3.30 (AUC 0.979)  nearest 3.44 (AUC 0.979)
+   qmaml - param  : +0.43 [+0.34, +0.54]  qmaml better on 0.86
+   qmaml - nearest: -0.08 [-0.14, -0.05]  qmaml better on 0.19
+   qmaml - joint  : +1.02 [+0.84, +1.21]  qmaml better on 1.00
+   qmaml   - pertask (n=36): -0.08 [-0.14, -0.04]
+   param   - pertask (n=36): -0.52 [-0.64, -0.31]
+   nearest - pertask (n=36): +0.00 [+0.00, +0.00]
+ few-shot K=16 n=16: median log10 R  qmaml 3.08  param 2.78  joint 2.52  nearest 3.02
+   qmaml - param  : +0.37 [+0.24, +0.49]  qmaml better on 0.81
+   qmaml - nearest: +0.10 [-0.05, +0.31]  qmaml better on 0.69
+   qmaml - joint  : +0.66 [+0.50, +0.73]  qmaml better on 0.94
+   qmaml adapted - qmaml zero-shot: -0.11 [-0.13, -0.03]
+ few-shot K=64 n=16: median log10 R  qmaml 3.12  param 2.85  joint 2.60  nearest 3.22
+   qmaml - param  : +0.28 [+0.11, +0.46]  qmaml better on 0.75
+   qmaml - nearest: -0.01 [-0.15, +0.22]  qmaml better on 0.50
+   qmaml - joint  : +0.64 [+0.53, +0.78]  qmaml better on 1.00
+   qmaml adapted - qmaml zero-shot: +0.02 [-0.07, +0.07]
+
+== capacity-matched conditioning (params: hyper_enc 77404, param_deep 69688)
+ held-out n=108: median log10 R  hyper_enc 3.36  param_deep 3.64  qmaml 3.23
+   qmaml - hyper_enc : -0.04 [-0.08, +0.01]  qmaml better on 0.43
+   qmaml - param_deep: -0.29 [-0.32, -0.27]  qmaml better on 0.00
+ train n=36: median log10 R  hyper_enc 3.37  param_deep 3.68  qmaml 3.30
+   qmaml - hyper_enc : -0.06 [-0.09, +0.02]  qmaml better on 0.39
+   qmaml - param_deep: -0.34 [-0.38, -0.28]  qmaml better on 0.00
+
+== deep feature front end (same 6->256->256->6 network on the features)
+ held-out n=108: median log10 R  qmaml_deep 3.35  joint_deep 2.47  param_deep 3.64
+   qmaml_deep - param_deep: -0.30 [-0.34, -0.25]  first better on 0.02
+   qmaml_deep - joint_deep: +0.92 [+0.83, +1.07]  first better on 1.00
+   qmaml_deep - qmaml     : +0.04 [+0.00, +0.11]  first better on 0.60
+ train n=36: median log10 R  qmaml_deep 3.46  joint_deep 2.55  param_deep 3.68
+   qmaml_deep - param_deep: -0.15 [-0.20, -0.11]  first better on 0.03
+   qmaml_deep - joint_deep: +1.05 [+0.85, +1.14]  first better on 1.00
+   qmaml_deep - qmaml     : +0.16 [+0.12, +0.18]  first better on 0.86

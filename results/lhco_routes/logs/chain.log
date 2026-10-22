@@ -1,0 +1,113 @@
+tune files 54 Fri Oct 16 02:30:26 PM IST 2026
+  joint       lr 0.001: mean log10 R on validation points 2.196
+  joint       lr 0.003: mean log10 R on validation points 2.215
+  joint       lr 0.01: mean log10 R on validation points 2.282
+  param       lr 0.001: mean log10 R on validation points 2.805
+  param       lr 0.003: mean log10 R on validation points 2.990
+  param       lr 0.01: mean log10 R on validation points 3.085
+  qmaml       lr 0.001: mean log10 R on validation points 3.156
+  qmaml       lr 0.003: mean log10 R on validation points 3.269
+  qmaml       lr 0.01: mean log10 R on validation points 3.171
+  hyper_enc   lr 0.001: mean log10 R on validation points 2.993
+  hyper_enc   lr 0.003: mean log10 R on validation points 3.244
+  hyper_enc   lr 0.01: mean log10 R on validation points 3.193
+  param_deep  lr 0.001: mean log10 R on validation points 3.516
+  param_deep  lr 0.003: mean log10 R on validation points 3.541
+  param_deep  lr 0.01: mean log10 R on validation points 3.497
+  qmaml_deep  lr 0.001: mean log10 R on validation points 3.310
+  qmaml_deep  lr 0.003: mean log10 R on validation points 3.270
+  qmaml_deep  lr 0.01: mean log10 R on validation points 3.045
+  joint_deep  lr 0.001: mean log10 R on validation points 2.339
+  joint_deep  lr 0.003: mean log10 R on validation points 2.352
+  joint_deep  lr 0.01: mean log10 R on validation points 2.313
+  nearest     lr 0.001: mean log10 R on validation points 2.933
+  nearest     lr 0.003: mean log10 R on validation points 2.976
+  nearest     lr 0.01: mean log10 R on validation points 2.838
+  classical   lr 0.001: mean log10 R on validation points 3.520
+  classical   lr 0.003: mean log10 R on validation points 3.579
+  classical   lr 0.01: mean log10 R on validation points 3.548
+{
+ "joint": 0.01,
+ "param": 0.01,
+ "qmaml": 0.003,
+ "hyper_enc": 0.003,
+ "param_deep": 0.003,
+ "qmaml_deep": 0.001,
+ "joint_deep": 0.003,
+ "nearest": 0.003,
+ "classical": 0.003
+}
+tune files 60 Thu Oct 22 06:06:19 AM IST 2026
+  joint       lr 0.001: mean log10 R on validation points 2.196
+  joint       lr 0.003: mean log10 R on validation points 2.215
+  joint       lr 0.01: mean log10 R on validation points 2.282
+  param       lr 0.001: mean log10 R on validation points 2.805
+  param       lr 0.003: mean log10 R on validation points 2.990
+  param       lr 0.01: mean log10 R on validation points 3.085
+  qmaml       lr 0.001: mean log10 R on validation points 3.156
+  qmaml       lr 0.003: mean log10 R on validation points 3.269
+  qmaml       lr 0.01: mean log10 R on validation points 3.171
+  hyper_enc   lr 0.001: mean log10 R on validation points 2.993
+  hyper_enc   lr 0.003: mean log10 R on validation points 3.244
+  hyper_enc   lr 0.01: mean log10 R on validation points 3.193
+  param_deep  lr 0.001: mean log10 R on validation points 3.516
+  param_deep  lr 0.003: mean log10 R on validation points 3.541
+  param_deep  lr 0.01: mean log10 R on validation points 3.497
+  qmaml_deep  lr 0.001: mean log10 R on validation points 3.310
+  qmaml_deep  lr 0.003: mean log10 R on validation points 3.270
+  qmaml_deep  lr 0.01: mean log10 R on validation points 3.045
+  joint_deep  lr 0.001: mean log10 R on validation points 2.339
+  joint_deep  lr 0.003: mean log10 R on validation points 2.352
+  joint_deep  lr 0.01: mean log10 R on validation points 2.313
+  nearest     lr 0.001: mean log10 R on validation points 2.933
+  nearest     lr 0.003: mean log10 R on validation points 2.976
+  nearest     lr 0.01: mean log10 R on validation points 2.838
+  classical   lr 0.001: mean log10 R on validation points 3.520
+  classical   lr 0.003: mean log10 R on validation points 3.579
+  classical   lr 0.01: mean log10 R on validation points 3.548
+{
+ "joint": 0.01,
+ "param": 0.01,
+ "qmaml": 0.003,
+ "hyper_enc": 0.003,
+ "param_deep": 0.003,
+ "qmaml_deep": 0.001,
+ "joint_deep": 0.003,
+ "nearest": 0.003,
+ "classical": 0.003
+}
+stage report done Thu Oct 22 01:39:26 PM IST 2026
+  gap to per-point BDT: joint -1.44  param -0.74  qmaml -0.41  hyper_enc -0.39  param_deep -0.18  qmaml_deep -0.40  joint_deep -1.43  nearest -0.80  classical -0.10
+spacing 100: 75 test points, seeds [0, 1, 2, 3, 4]
+  median log10 R: joint 2.31  param 3.07  qmaml 3.36  hyper_enc 3.48  param_deep 3.70  qmaml_deep 3.46  joint_deep 2.49  nearest 3.03  classical 3.74
+  qmaml - joint      : +1.031 [+0.933, +1.119]  p_holm 0  win   qmaml better on 1.00
+  qmaml - param      : +0.327 [+0.286, +0.371]  p_holm 0  win   qmaml better on 0.87
+  qmaml - hyper_enc  : -0.020 [-0.140, +0.088]  p_holm 1  tie   qmaml better on 0.44
+  qmaml - param_deep : -0.233 [-0.312, -0.169]  p_holm 0  loss  qmaml better on 0.14
+  qmaml - qmaml_deep : -0.010 [-0.086, +0.072]  p_holm 1  tie   qmaml better on 0.43
+  qmaml - joint_deep : +1.023 [+0.962, +1.085]  p_holm 0  win   qmaml better on 1.00
+  qmaml - nearest    : +0.390 [+0.316, +0.479]  p_holm 0  win   qmaml better on 0.83
+  qmaml - classical  : -0.305 [-0.345, -0.265]  p_holm 0  loss  qmaml better on 0.04
+  gap to per-point BDT: joint -1.53  param -0.80  qmaml -0.63  hyper_enc -0.71  param_deep -0.33  qmaml_deep -0.71  joint_deep -1.65  nearest -0.97  classical -0.26
+spacing 150: 90 test points, seeds [0, 1, 2, 3, 4]
+  median log10 R: joint 2.20  param 2.97  qmaml 3.06  hyper_enc 2.90  param_deep 3.56  qmaml_deep 3.05  joint_deep 1.96  nearest 2.73  classical 3.57
+  qmaml - joint      : +0.897 [+0.753, +1.028]  p_holm 0  win   qmaml better on 0.96
+  qmaml - param      : +0.175 [+0.085, +0.279]  p_holm 0  win   qmaml better on 0.63
+  qmaml - hyper_enc  : +0.081 [-0.059, +0.237]  p_holm 0.28  tie   qmaml better on 0.50
+  qmaml - param_deep : -0.303 [-0.453, -0.156]  p_holm 0  loss  qmaml better on 0.19
+  qmaml - qmaml_deep : +0.080 [+0.024, +0.131]  p_holm 0.0048  win   qmaml better on 0.55
+  qmaml - joint_deep : +1.018 [+0.882, +1.147]  p_holm 0  win   qmaml better on 0.98
+  qmaml - nearest    : +0.345 [+0.221, +0.449]  p_holm 0  win   qmaml better on 0.76
+  qmaml - classical  : -0.372 [-0.460, -0.288]  p_holm 0  loss  qmaml better on 0.16
+  gap to per-point BDT: joint -1.77  param -1.16  qmaml -1.24  hyper_enc -1.44  param_deep -1.10  qmaml_deep -1.26  joint_deep -1.96  nearest -1.26  classical -1.05
+spacing 200: 94 test points, seeds [0, 1, 2, 3, 4]
+  median log10 R: joint 1.86  param 2.70  qmaml 2.36  hyper_enc 2.11  param_deep 2.54  qmaml_deep 2.38  joint_deep 1.66  nearest 2.34  classical 2.58
+  qmaml - joint      : +0.531 [+0.452, +0.600]  p_holm 0  win   qmaml better on 0.84
+  qmaml - param      : -0.085 [-0.238, +0.068]  p_holm 0.899  tie   qmaml better on 0.47
+  qmaml - hyper_enc  : +0.197 [+0.072, +0.331]  p_holm 0.005  win   qmaml better on 0.58
+  qmaml - param_deep : -0.145 [-0.254, -0.028]  p_holm 0.0656  tie   qmaml better on 0.37
+  qmaml - qmaml_deep : +0.014 [-0.076, +0.100]  p_holm 1  tie   qmaml better on 0.51
+  qmaml - joint_deep : +0.719 [+0.585, +0.851]  p_holm 0  win   qmaml better on 0.91
+  qmaml - nearest    : +0.016 [-0.112, +0.167]  p_holm 1  tie   qmaml better on 0.48
+  qmaml - classical  : -0.198 [-0.306, -0.106]  p_holm 0  loss  qmaml better on 0.34
+chain done Thu Oct 22 01:42:55 PM IST 2026

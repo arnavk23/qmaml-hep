@@ -8,6 +8,8 @@
   fig_r2_class.pdf        classification accuracy, all arms, with classical baselines
   fig_r2_bp.pdf           corrected gradient-variance scan (live parameters only)
   fig_r2_replication.pdf  paper-scale replication (12-qubit Heisenberg, 10-qubit LiH), plotted as in the paper's Fig. 4
+  fig_lhco_routes.pdf     LHCO (m_X, m_Y) grid: Q-MAML against every route for the masses, per grid spacing, and each
+                          arm's gap to a per-point BDT
 Colour: Okabe-Ito; every series also has its own marker/line style (colour is never the only cue).
 """
 
@@ -488,6 +490,65 @@ def cross_platform():
     plt.close(fig)
 
 
+LHCO_LABEL = {
+    "joint": "joint (no masses)",
+    "param": "param (masses as circuit inputs)",
+    "nearest": "nearest simulated mass",
+    "hyper_enc": "hyper-enc (masses set the encoding)",
+    "qmaml_deep": "Q-MAML, deep front end",
+    "joint_deep": "joint, deep front end",
+    "param_deep": "param-deep (masses with the features)",
+    "classical": "classical parameterised MLP",
+}
+LHCO_SPACING = {100: ("o", "#0072B2"), 150: ("s", "#009E73"), 200: ("^", "#7F7F7F")}
+
+
+def lhco_routes():
+    """LHCO (m_X, m_Y) grid. Left: Q-MAML minus each arm, mean paired log10 R with 95% hierarchical-bootstrap
+    interval, per training-grid spacing; letters give the Holm verdict. Right: each arm's gap to a BDT trained at the
+    target mass itself."""
+    S = {}
+    for sp in LHCO_SPACING:
+        path = os.path.join(R, "lhco_routes", f"summary_sp{sp}_qmaml.json")
+        if os.path.exists(path):
+            S[sp] = json.load(open(path))
+    if not S:
+        return
+    opps = list(LHCO_LABEL)
+    fig, (ax, bx) = plt.subplots(1, 2, figsize=(7.0, 3.4), gridspec_kw={"width_ratios": [1.7, 1]})
+    for j, (sp, s) in enumerate(S.items()):
+        mk, col = LHCO_SPACING[sp]
+        off = (1 - j) * 0.26
+        rows = {r["opponent"]: r for r in s["comparisons"]}
+        for i, o in enumerate(opps):
+            r, y = rows[o], len(opps) - 1 - i + off
+            ax.plot([r["lo"], r["hi"]], [y, y], color=col, lw=1.0)
+            ax.plot(r["mean"], y, mk, ms=3.8, color=col, label=f"{sp} GeV grid" if i == 0 else None)
+            ax.text(1.01 + 0.035 * j, y, r["verdict"][0].upper(), transform=ax.get_yaxis_transform(), fontsize=5.5, va="center",
+                    color=col)  # fmt: skip
+        arms = ["qmaml"] + opps
+        for i, a in enumerate(arms):
+            g, y = s["gap_to_oracle_bdt"][a], len(arms) - 1 - i + off
+            bx.plot([g["lo"], g["hi"]], [y, y], color=col, lw=1.0)
+            bx.plot(g["mean"], y, mk, ms=3.8, color=col)
+    ax.axvline(0, color="k", lw=0.6)
+    ax.set_yticks(range(len(opps))[::-1], [LHCO_LABEL[o] for o in opps])
+    ax.set_xlabel("Q-MAML $-$ arm: mean $\\Delta\\log_{10}R$ ($>0$: Q-MAML rejects more background)")
+    ax.grid(axis="x", color="0.92", lw=0.5)
+    ax.legend(loc="lower center", bbox_to_anchor=(0.5, 1.0), ncol=3, fontsize=6, handletextpad=0.3)
+    bx.axvline(0, color="k", lw=0.6)
+    bx.set_yticks(
+        range(len(opps) + 1)[::-1],
+        ["Q-MAML"]
+        + [LHCO_LABEL[o].split(" (")[0].replace("classical parameterised MLP", "classical MLP") for o in opps],
+    )
+    bx.set_xlabel("gap to per-point BDT\n(arm $-$ BDT, $\\Delta\\log_{10}R$)")
+    bx.grid(axis="x", color="0.92", lw=0.5)
+    fig.tight_layout()
+    fig.savefig(os.path.join(OUT, "fig_lhco_routes.pdf"))
+    plt.close(fig)
+
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     S = summary()
@@ -502,4 +563,5 @@ if __name__ == "__main__":
     replication()
     interpolator(S)
     cross_platform()
+    lhco_routes()
     print("figures written to", OUT)

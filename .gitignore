@@ -24,3 +24,6 @@ results/paper_replication/*_shard*of*.json
 coverage.xml
 .coverage
 site/
+
+# private correspondence drafts
+notes/**/email_draft*.md

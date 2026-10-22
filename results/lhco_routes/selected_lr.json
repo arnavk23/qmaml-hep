@@ -1,0 +1,11 @@
+{
+ "joint": 0.01,
+ "param": 0.01,
+ "qmaml": 0.003,
+ "hyper_enc": 0.003,
+ "param_deep": 0.003,
+ "qmaml_deep": 0.001,
+ "joint_deep": 0.003,
+ "nearest": 0.003,
+ "classical": 0.003
+}
