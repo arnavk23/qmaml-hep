@@ -8,7 +8,7 @@ import pytest
 import torch
 
 from qmaml_hep.classification.lhco import FEATS, features
-from qmaml_hep.experiments.lhco_routes import ARMS, Arm, grid_split, nearest_of, rejection
+from qmaml_hep.experiments.lhco_routes import ARMS, Arm, adapt, fs_modes, grid_split, nearest_of, rejection
 
 GRID = [(a, b) for a in range(50, 601, 50) for b in range(50, 601, 50)]
 
@@ -99,3 +99,52 @@ def test_rejection_metric():
     rng = np.random.default_rng(0)
     auc, _, rej = rejection(y, rng.random(1100))
     assert 0.4 < auc < 0.6 and rej < 10
+
+
+class _FakeData:
+    """Stands in for lhco_routes.Data: Gaussian signal per mass point and Gaussian QCD."""
+
+    def __init__(self):
+        rng = np.random.default_rng(0)
+        self.sig = {(100, 400): (rng.normal(1.0, 1.0, (300, 6)).astype(np.float32), None)}
+        self.q_train = rng.normal(0.0, 1.0, (1000, 6)).astype(np.float32)
+
+    def norm(self, a):
+        return torch.tensor(a, dtype=torch.float32)
+
+
+def test_fewshot_events_depend_only_on_seed_mass_and_k():
+    data, m = _FakeData(), (100, 400)
+    seen = []
+    for arm in ("joint", "classical"):
+        orig = data.norm
+        data.norm = lambda a, orig=orig: (seen.append(a.copy()), orig(a))[1]
+        adapt(Arm(arm, seed=0), data, m, 16, "all", 1e-3, seed=3)
+        data.norm = orig
+    np.testing.assert_array_equal(seen[0], seen[1])
+    assert seen[0].shape == (32, 6)
+
+
+def test_theta_adaptation_changes_only_theta():
+    data, m = _FakeData(), (100, 400)
+    model = Arm("qmaml", seed=0)
+    before = {n: p.detach().clone() for n, p in model.named_parameters()}
+    adapted, theta = adapt(model, data, m, 16, "theta", 1e-2, seed=0)
+    assert all(torch.equal(p, before[n]) for n, p in adapted.named_parameters())
+    assert all(torch.equal(p, before[n]) for n, p in model.named_parameters())  # the original is untouched
+    assert theta is not None and not torch.allclose(theta, model.theta(m).detach())
+
+
+def test_full_adaptation_changes_the_copy_not_the_original():
+    data, m = _FakeData(), (100, 400)
+    model = Arm("param_deep", seed=0)
+    before = {n: p.detach().clone() for n, p in model.named_parameters()}
+    adapted, theta = adapt(model, data, m, 16, "all", 1e-2, seed=0)
+    assert theta is None
+    assert any(not torch.equal(p, before[n]) for n, p in adapted.named_parameters())
+    assert all(torch.equal(p, before[n]) for n, p in model.named_parameters())
+
+
+def test_only_qmaml_has_a_theta_mode():
+    assert fs_modes("qmaml") == ["all", "theta"]
+    assert all(fs_modes(a) == ["all"] for a in ARMS if a != "qmaml")
