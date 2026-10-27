@@ -474,15 +474,20 @@ def windows(spacing=100, seed=0):
             with torch.no_grad():
                 o = model(data.norm(x), m)
             s = (o[:, 1] - o[:, 0]).numpy()
+            inside = scan[s >= s.max() - 1.0]  # window: where the logit is within 1 of its peak (odds within e)
+            q25, q75 = np.percentile(data.sig[m][0][:, 0], [25, 75])
             rows[f"{m[0]},{m[1]}"] = dict(peak=float(scan[np.argmax(s)]), true=float(min(m)),
-                                          median_mj_lo=float(np.median(data.sig[m][0][:, 0])))  # fmt: skip
+                                          median_mj_lo=float(np.median(data.sig[m][0][:, 0])),
+                                          width=float(inside.max() - inside.min()), signal_iqr=float(q75 - q25),
+                                          profile=s.round(4).tolist())  # fmt: skip
         err = np.array([r["peak"] - r["median_mj_lo"] for r in rows.values()])
         peaks = np.array([r["peak"] for r in rows.values()])
         truth = np.array([r["median_mj_lo"] for r in rows.values()])
+        width = np.array([r["width"] for r in rows.values()])
         out["arms"][arm] = dict(points=rows, median_abs_err_gev=float(np.median(np.abs(err))),
-                                corr=float(np.corrcoef(peaks, truth)[0, 1]))  # fmt: skip
+                                corr=float(np.corrcoef(peaks, truth)[0, 1]), median_width_gev=float(np.median(width)))  # fmt: skip
         print(f"  {arm:11s} peak vs signal median of mj_lo: median |error| {np.median(np.abs(err)):.0f} GeV, "
-              f"correlation {out['arms'][arm]['corr']:.2f}", flush=True)  # fmt: skip
+              f"correlation {out['arms'][arm]['corr']:.2f}, median window width {np.median(width):.0f} GeV", flush=True)  # fmt: skip
     with open(os.path.join(OUT, f"windows_sp{spacing}_s{seed}.json"), "w") as f:
         json.dump(out, f, indent=1)
     return out

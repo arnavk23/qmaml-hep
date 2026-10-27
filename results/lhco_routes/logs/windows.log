@@ -1,0 +1,4 @@
+  qmaml       peak vs signal median of mj_lo: median |error| 10 GeV, correlation 0.99, median window width 70 GeV
+  hyper_enc   peak vs signal median of mj_lo: median |error| 7 GeV, correlation 1.00, median window width 65 GeV
+  param_deep  peak vs signal median of mj_lo: median |error| 5 GeV, correlation 1.00, median window width 50 GeV
+  classical   peak vs signal median of mj_lo: median |error| 12 GeV, correlation 0.99, median window width 40 GeV
