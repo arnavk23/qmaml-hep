@@ -3,6 +3,6 @@
   "upload_type": "software",
   "creators": [{"name": "Kapoor, Arnav", "affiliation": "Indian Institute of Science Education and Research Bhopal"}],
   "license": "MIT",
-  "keywords": ["variational quantum eigensolver", "meta-learning", "lattice gauge theory", "benchmark", "high-energy physics"],
+  "keywords": ["variational quantum eigensolver", "meta-learning", "lattice gauge theory", "benchmark", "high-energy physics", "LHC Olympics", "parameterised classifier"],
   "related_identifiers": [{"identifier": "arXiv:2501.05906", "relation": "cites", "scheme": "arxiv"}]
 }

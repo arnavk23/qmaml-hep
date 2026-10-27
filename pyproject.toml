@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "qmaml-hep"
-version = "0.3.0"
+version = "0.4.0"
 description = "Learned initialization (Q-MAML) for variational quantum circuits on HEP Hamiltonians, benchmarked against classical and warm-start baselines"
 readme = "README.md"
 license = "MIT"

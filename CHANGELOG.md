@@ -5,6 +5,8 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-28
+
 ### Added
 - LHCO (m_X, m_Y) routes study (`qmaml_hep.classification.lhco`, `qmaml_hep.experiments.lhco_routes`,
   `results/lhco_routes/`, `fig_lhco_routes`, `tab_lhco`): where should the task descriptor enter a variational
@@ -55,5 +57,7 @@ All notable changes to this project are documented here. The format follows
   gradient-variance scan and the paper-scale replication.
 - Every raw result behind the round-2 analysis, and scripts that regenerate all figures and tables from them.
 
+[Unreleased]: https://github.com/arnavk23/qmaml-hep/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/arnavk23/qmaml-hep/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/arnavk23/qmaml-hep/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/arnavk23/qmaml-hep/releases/tag/v0.2.0
