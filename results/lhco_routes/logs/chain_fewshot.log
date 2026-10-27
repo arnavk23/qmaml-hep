@@ -1,0 +1,66 @@
+fstune start Tue Oct 27 10:59:41 AM IST 2026
+stage fstune done Tue Oct 27 12:34:06 PM IST 2026
+  joint       all   K= 16: lr 0.0001 2.350  lr 0.001 2.503  lr 0.01 2.184
+  joint       all   K= 64: lr 0.0001 2.373  lr 0.001 2.638  lr 0.01 2.449
+  param       all   K= 16: lr 0.0001 3.098  lr 0.001 2.793  lr 0.01 2.339
+  param       all   K= 64: lr 0.0001 3.141  lr 0.001 2.905  lr 0.01 2.326
+  qmaml       all   K= 16: lr 0.0001 3.162  lr 0.001 2.769  lr 0.01 2.401
+  qmaml       all   K= 64: lr 0.0001 3.234  lr 0.001 2.881  lr 0.01 2.541
+  qmaml       theta K= 16: lr 0.0001 3.274  lr 0.001 3.278  lr 0.01 3.034
+  qmaml       theta K= 64: lr 0.0001 3.276  lr 0.001 3.289  lr 0.01 3.142
+  hyper_enc   all   K= 16: lr 0.0001 3.106  lr 0.001 2.545  lr 0.01 2.195
+  hyper_enc   all   K= 64: lr 0.0001 3.171  lr 0.001 2.652  lr 0.01 2.432
+  param_deep  all   K= 16: lr 0.0001 3.389  lr 0.001 2.718  lr 0.01 2.230
+  param_deep  all   K= 64: lr 0.0001 3.418  lr 0.001 2.754  lr 0.01 2.280
+  qmaml_deep  all   K= 16: lr 0.0001 2.974  lr 0.001 2.583  lr 0.01 1.926
+  qmaml_deep  all   K= 64: lr 0.0001 3.052  lr 0.001 2.554  lr 0.01 1.940
+  joint_deep  all   K= 16: lr 0.0001 2.516  lr 0.001 2.294  lr 0.01 2.057
+  joint_deep  all   K= 64: lr 0.0001 2.598  lr 0.001 2.488  lr 0.01 2.175
+  nearest     all   K= 16: lr 0.0001 3.010  lr 0.001 2.842  lr 0.01 2.341
+  nearest     all   K= 64: lr 0.0001 3.047  lr 0.001 2.984  lr 0.01 2.473
+  classical   all   K= 16: lr 0.0001 3.507  lr 0.001 3.210  lr 0.01 2.384
+  classical   all   K= 64: lr 0.0001 3.512  lr 0.001 3.152  lr 0.01 2.444
+stage fewshot done Wed Oct 28 02:46:55 AM IST 2026
+spacing 100: 75 test points, seeds [0, 1, 2, 3, 4]; zero-shot drift from report 0
+  K=16: gain over zero-shot: qmaml_theta -0.01  qmaml_all -0.16  joint +0.16  param +0.03  hyper_enc -0.16  param_deep -0.10  qmaml_deep -0.33  joint_deep +0.17  nearest +0.05  classical -0.05
+    qmaml(theta) - qmaml_all  : +0.151 [+0.114, +0.197]  p_holm 0  win
+    qmaml(theta) - joint      : +0.857 [+0.771, +0.935]  p_holm 0  win
+    qmaml(theta) - param      : +0.289 [+0.248, +0.330]  p_holm 0  win
+    qmaml(theta) - hyper_enc  : +0.126 [+0.033, +0.213]  p_holm 0.0066  win
+    qmaml(theta) - param_deep : -0.147 [-0.195, -0.095]  p_holm 0  loss
+    qmaml(theta) - qmaml_deep : +0.307 [+0.226, +0.379]  p_holm 0  win
+    qmaml(theta) - joint_deep : +0.845 [+0.769, +0.916]  p_holm 0  win
+    qmaml(theta) - nearest    : +0.331 [+0.258, +0.414]  p_holm 0  win
+    qmaml(theta) - classical  : -0.270 [-0.324, -0.216]  p_holm 0  loss
+  K=64: gain over zero-shot: qmaml_theta +0.00  qmaml_all -0.08  joint +0.37  param +0.05  hyper_enc -0.08  param_deep -0.06  qmaml_deep -0.23  joint_deep +0.22  nearest +0.08  classical -0.03
+    qmaml(theta) - qmaml_all  : +0.081 [+0.046, +0.116]  p_holm 0  win
+    qmaml(theta) - joint      : +0.662 [+0.567, +0.752]  p_holm 0  win
+    qmaml(theta) - param      : +0.278 [+0.226, +0.325]  p_holm 0  win
+    qmaml(theta) - hyper_enc  : +0.061 [-0.044, +0.158]  p_holm 0.234  tie
+    qmaml(theta) - param_deep : -0.172 [-0.221, -0.132]  p_holm 0  loss
+    qmaml(theta) - qmaml_deep : +0.222 [+0.132, +0.303]  p_holm 0  win
+    qmaml(theta) - joint_deep : +0.802 [+0.720, +0.877]  p_holm 0  win
+    qmaml(theta) - nearest    : +0.312 [+0.231, +0.403]  p_holm 0  win
+    qmaml(theta) - classical  : -0.272 [-0.324, -0.219]  p_holm 0  loss
+spacing 150: 90 test points, seeds [0, 1, 2, 3, 4]; zero-shot drift from report 0
+  K=16: gain over zero-shot: qmaml_theta +0.03  qmaml_all -0.03  joint +0.33  param +0.04  hyper_enc +0.01  param_deep -0.05  qmaml_deep -0.09  joint_deep +0.38  nearest +0.07  classical -0.00
+    qmaml(theta) - qmaml_all  : +0.056 [+0.006, +0.105]  p_holm 0.05  tie
+    qmaml(theta) - joint      : +0.600 [+0.464, +0.750]  p_holm 0  win
+    qmaml(theta) - param      : +0.168 [+0.085, +0.272]  p_holm 0  win
+    qmaml(theta) - hyper_enc  : +0.103 [-0.023, +0.225]  p_holm 0.112  tie
+    qmaml(theta) - param_deep : -0.220 [-0.358, -0.094]  p_holm 0  loss
+    qmaml(theta) - qmaml_deep : +0.201 [+0.100, +0.302]  p_holm 0  win
+    qmaml(theta) - joint_deep : +0.671 [+0.567, +0.768]  p_holm 0  win
+    qmaml(theta) - nearest    : +0.300 [+0.189, +0.390]  p_holm 0  win
+    qmaml(theta) - classical  : -0.342 [-0.436, -0.256]  p_holm 0  loss
+  K=64: gain over zero-shot: qmaml_theta +0.05  qmaml_all +0.08  joint +0.50  param +0.06  hyper_enc +0.11  param_deep +0.00  qmaml_deep +0.05  joint_deep +0.48  nearest +0.11  classical +0.03
+    qmaml(theta) - qmaml_all  : -0.028 [-0.082, +0.026]  p_holm 0.656  tie
+    qmaml(theta) - joint      : +0.449 [+0.321, +0.589]  p_holm 0  win
+    qmaml(theta) - param      : +0.167 [+0.087, +0.263]  p_holm 0  win
+    qmaml(theta) - hyper_enc  : +0.029 [-0.078, +0.141]  p_holm 0.656  tie
+    qmaml(theta) - param_deep : -0.253 [-0.382, -0.130]  p_holm 0  loss
+    qmaml(theta) - qmaml_deep : +0.081 [-0.016, +0.173]  p_holm 0.317  tie
+    qmaml(theta) - joint_deep : +0.596 [+0.501, +0.683]  p_holm 0  win
+    qmaml(theta) - nearest    : +0.290 [+0.184, +0.379]  p_holm 0  win
+    qmaml(theta) - classical  : -0.351 [-0.430, -0.278]  p_holm 0  loss
+chain done Wed Oct 28 02:47:22 AM IST 2026

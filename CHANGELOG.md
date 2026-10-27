@@ -12,6 +12,12 @@ All notable changes to this project are documented here. The format follows
   points, five seeds, hierarchical bootstrap and Holm. Q-MAML beats nearest-mass transfer and masses as linear
   inputs on the 100 and 150 GeV grids, ties an encoding hypernetwork, and loses about 2× to feeding the masses in
   with the features (`param_deep`) and to the classical parameterised MLP. On the 200 GeV grid most comparisons tie.
+- Few-shot stage (`fstune`, `fewshot`, `select-fs`, `score-fewshot`): every arm adapted on K = 16 and 64 events
+  at each test point (Q-MAML adapts only θ, Algorithm 2), step size tuned on validation points. Adaptation changes
+  no verdict against nearest, `param_deep` or the classical network on the 100 and 150 GeV grids; only arms
+  without the masses gain much.
+- `windows` check: every route's score peaks at the signal's jet mass (median error 5-12 GeV); the better routes cut
+  narrower windows.
 - `notes/lhco_feasibility/`: the feasibility checks and pilot that motivated the study.
 
 ## [0.3.0] - 2026-10-13
