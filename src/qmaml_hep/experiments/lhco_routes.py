@@ -80,6 +80,8 @@ EPS_S = 0.3
 # rate is still selected on validation points only.
 FS_K, FS_STEPS, FS_LRS, FS_SPACINGS = [16, 64], 50, [1e-4, 1e-3, 1e-2], [100, 150]
 MSCALE = 600.0
+# QMAML_DEVICE=cuda runs on a GPU. Models are initialised on the CPU (same random draws) and then moved.
+DEVICE = torch.device(os.environ.get("QMAML_DEVICE", "cpu"))
 
 
 # ------------------------------------------------------------------------------------------------- splits
@@ -111,12 +113,12 @@ class Data:
         self.masses = sorted(self.sig)
 
     def norm(self, a):
-        return torch.tensor((a - self.mu) / self.sd, dtype=torch.float32)
+        return torch.tensor((a - self.mu) / self.sd, dtype=torch.float32, device=DEVICE)
 
     def batch(self, m, n, rng):
         xs = self.sig[m][0][rng.choice(len(self.sig[m][0]), n, replace=len(self.sig[m][0]) < n)]
         xb = self.q_train[rng.choice(len(self.q_train), n, replace=False)]
-        return self.norm(np.vstack([xs, xb])), torch.cat([torch.ones(n), torch.zeros(n)]).long()
+        return self.norm(np.vstack([xs, xb])), torch.cat([torch.ones(n), torch.zeros(n)]).long().to(DEVICE)
 
 
 # ------------------------------------------------------------------------------------------------- models
@@ -135,6 +137,7 @@ class Arm(nn.Module):
         self.kind = kind
         if kind == "classical":
             self.net = mlp(8, 2, h=128, n=3)
+            self.to(DEVICE)
             return
         if kind in ("joint", "qmaml", "nearest"):
             self.front = nn.Linear(6, NQ)
@@ -157,14 +160,15 @@ class Arm(nn.Module):
         if kind in ("qmaml", "qmaml_deep"):
             self.learner = Learner(2, (DEPTH, NQ, 3), 256, n_hidden=2).double()
             self.pqc.weights.requires_grad = False
+        self.to(DEVICE)
 
     def theta(self, m):
         if self.kind in ("qmaml", "qmaml_deep"):
-            return self.learner(torch.tensor(np.asarray(m) / MSCALE, dtype=torch.float64))
+            return self.learner(torch.tensor(np.asarray(m) / MSCALE, dtype=torch.float64, device=DEVICE))
         return self.pqc.weights
 
     def forward(self, x, m, theta=None):
-        mm = torch.tensor(np.asarray(m) / MSCALE, dtype=torch.float32).expand(len(x), 2)
+        mm = torch.tensor(np.asarray(m) / MSCALE, dtype=torch.float32, device=DEVICE).expand(len(x), 2)
         if self.kind == "classical":
             return self.net(torch.cat([x, mm], 1))
         if self.kind == "hyper_enc":
@@ -209,7 +213,7 @@ def evaluate(model, data, m, qcd, theta=None):
     for x in (xs, xb):
         for i in range(0, len(x), 50_000):
             o = model(x[i : i + 50_000], m, theta)
-            s.append((o[:, 1] - o[:, 0]).numpy())
+            s.append((o[:, 1] - o[:, 0]).cpu().numpy())
     return rejection(np.r_[np.ones(len(xs)), np.zeros(len(xb))], np.concatenate(s))
 
 
@@ -224,7 +228,7 @@ def adapt(model, data, m, k, mode, lr, seed):
     sig = data.sig[m][0]
     xs = sig[rng.choice(len(sig), k, replace=False)]
     xb = data.q_train[rng.choice(len(data.q_train), k, replace=False)]
-    x, y = data.norm(np.vstack([xs, xb])), torch.cat([torch.ones(k), torch.zeros(k)]).long()
+    x, y = data.norm(np.vstack([xs, xb])), torch.cat([torch.ones(k), torch.zeros(k)]).long().to(DEVICE)
     model = copy.deepcopy(model)
     theta = None
     if mode == "theta":
@@ -473,7 +477,7 @@ def windows(spacing=100, seed=0):
             x[:, 0] = scan
             with torch.no_grad():
                 o = model(data.norm(x), m)
-            s = (o[:, 1] - o[:, 0]).numpy()
+            s = (o[:, 1] - o[:, 0]).cpu().numpy()
             inside = scan[s >= s.max() - 1.0]  # window: where the logit is within 1 of its peak (odds within e)
             q25, q75 = np.percentile(data.sig[m][0][:, 0], [25, 75])
             rows[f"{m[0]},{m[1]}"] = dict(peak=float(scan[np.argmax(s)]), true=float(min(m)),

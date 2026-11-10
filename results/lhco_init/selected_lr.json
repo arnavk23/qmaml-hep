@@ -1,0 +1,6 @@
+{
+ "learner": 0.001,
+ "nearest": 0.003,
+ "shared": 0.003,
+ "fresh": 0.003
+}

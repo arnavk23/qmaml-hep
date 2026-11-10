@@ -106,8 +106,8 @@ def sel_expvals(x, weights, bound_angles=True):
         for i in range(n):
             psi = torch.einsum("ij,bajc->baic", R[i], psi.reshape(B, 2**i, 2, 2 ** (n - i - 1))).reshape(B, -1)
         if n > 1:
-            psi = psi[:, _ring_perm(n, (l % (n - 1)) + 1)]
-    return (psi.abs() ** 2) @ _zsign(n)
+            psi = psi[:, _ring_perm(n, (l % (n - 1)) + 1).to(psi.device)]
+    return (psi.abs() ** 2) @ _zsign(n).to(psi.device)
 
 
 def sel_expvals_gatewise(x, weights, bound_angles=True):

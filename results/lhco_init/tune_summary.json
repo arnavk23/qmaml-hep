@@ -1,0 +1,58 @@
+{
+ "learner": {
+  "0.001": {
+   "frac_reached": 0.21212121212121213,
+   "median_steps": Infinity
+  },
+  "0.003": {
+   "frac_reached": 0.21212121212121213,
+   "median_steps": Infinity
+  },
+  "0.01": {
+   "frac_reached": 0.21212121212121213,
+   "median_steps": Infinity
+  }
+ },
+ "nearest": {
+  "0.001": {
+   "frac_reached": 0.06060606060606061,
+   "median_steps": Infinity
+  },
+  "0.003": {
+   "frac_reached": 0.21212121212121213,
+   "median_steps": Infinity
+  },
+  "0.01": {
+   "frac_reached": 0.18181818181818182,
+   "median_steps": Infinity
+  }
+ },
+ "shared": {
+  "0.001": {
+   "frac_reached": 0.0,
+   "median_steps": Infinity
+  },
+  "0.003": {
+   "frac_reached": 0.030303030303030304,
+   "median_steps": Infinity
+  },
+  "0.01": {
+   "frac_reached": 0.030303030303030304,
+   "median_steps": Infinity
+  }
+ },
+ "fresh": {
+  "0.001": {
+   "frac_reached": 0.0,
+   "median_steps": Infinity
+  },
+  "0.003": {
+   "frac_reached": 0.030303030303030304,
+   "median_steps": Infinity
+  },
+  "0.01": {
+   "frac_reached": 0.0,
+   "median_steps": Infinity
+  }
+ }
+}
