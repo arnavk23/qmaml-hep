@@ -8,7 +8,7 @@
   fig_r2_class.pdf        classification accuracy, all arms, with classical baselines
   fig_r2_bp.pdf           corrected gradient-variance scan (live parameters only)
   fig_r2_replication.pdf  paper-scale replication (12-qubit Heisenberg, 10-qubit LiH), plotted as in the paper's Fig. 4
-  fig_lhco_routes.pdf     LHCO (m_X, m_Y) grid: Q-MAML against every route for the masses, per grid spacing, and each
+  fig_lhco_routes.pdf     LHCO (m_X, m_Y) grid: the Learner-conditioned classifier (LCC) against every route for the masses, per grid spacing, and each
                           arm's gap to a per-point BDT
 Colour: Okabe-Ito; every series also has its own marker/line style (colour is never the only cue).
 """
@@ -495,7 +495,7 @@ LHCO_LABEL = {
     "param": "param (masses as circuit inputs)",
     "nearest": "nearest simulated mass",
     "hyper_enc": "hyper-enc (masses set the encoding)",
-    "qmaml_deep": "Q-MAML, deep front end",
+    "qmaml_deep": "LCC, deep front end",
     "joint_deep": "joint, deep front end",
     "param_deep": "param-deep (masses with the features)",
     "classical": "classical parameterised MLP",
@@ -504,7 +504,7 @@ LHCO_SPACING = {100: ("o", "#0072B2"), 150: ("s", "#009E73"), 200: ("^", "#7F7F7
 
 
 def lhco_routes():
-    """LHCO (m_X, m_Y) grid. Left: Q-MAML minus each arm, mean paired log10 R with 95% hierarchical-bootstrap
+    """LHCO (m_X, m_Y) grid. Left: the Learner-conditioned classifier (LCC, arm "qmaml") minus each arm, mean paired log10 R with 95% hierarchical-bootstrap
     interval, per training-grid spacing; letters give the Holm verdict. Right: each arm's gap to a BDT trained at the
     target mass itself."""
     S = {}
@@ -533,13 +533,13 @@ def lhco_routes():
             bx.plot(g["mean"], y, mk, ms=3.8, color=col)
     ax.axvline(0, color="k", lw=0.6)
     ax.set_yticks(range(len(opps))[::-1], [LHCO_LABEL[o] for o in opps])
-    ax.set_xlabel("Q-MAML $-$ arm: mean $\\Delta\\log_{10}R$ ($>0$: Q-MAML rejects more background)")
+    ax.set_xlabel("LCC $-$ arm: mean $\\Delta\\log_{10}R$ ($>0$: LCC rejects more background)")
     ax.grid(axis="x", color="0.92", lw=0.5)
     ax.legend(loc="lower center", bbox_to_anchor=(0.5, 1.0), ncol=3, fontsize=6, handletextpad=0.3)
     bx.axvline(0, color="k", lw=0.6)
     bx.set_yticks(
         range(len(opps) + 1)[::-1],
-        ["Q-MAML"]
+        ["LCC"]
         + [LHCO_LABEL[o].split(" (")[0].replace("classical parameterised MLP", "classical MLP") for o in opps],
     )
     bx.set_xlabel("gap to per-point BDT\n(arm $-$ BDT, $\\Delta\\log_{10}R$)")

@@ -4,7 +4,7 @@ tab_design.tex    per-track design: qubits, Hilbert dim, ansatz, depth, #angles 
 tab_physics.tex   per-track physics question answered by the ground state, and the pre-use verification
 tab_verdicts.tex  round-2 verdicts (iterations to 1e-3, hierarchical-bootstrap CI, Holm) from unified_summary.json
 tab_class.tex     classification (HIGGS 4/6/8, quark-gluon 6) from results/classification_v2
-tab_lhco.tex      LHCO (m_X, m_Y) routes: Q-MAML minus each arm per grid spacing, and each arm's gap to a per-point
+tab_lhco.tex      LHCO (m_X, m_Y) routes: the Learner-conditioned classifier (LCC) minus each arm per grid spacing, and each arm's gap to a per-point
                   BDT, from results/lhco_routes
 """
 
@@ -163,12 +163,12 @@ def design():
 
 
 LHCO_ARMS = {  # arm: (label, where the masses enter)
-    "qmaml": ("Q-MAML", r"$\theta=h_W(m)$"),
+    "qmaml": ("LCC", r"$\theta=h_W(m)$"),  # Learner-conditioned classifier (Q-MAML's Learner, zero-shot)
     "joint": ("joint", "nowhere"),
     "param": ("param", r"linear encoding of $[x,m]$"),
     "nearest": ("nearest", "nearest training mass"),
     "hyper_enc": ("hyper-enc", r"MLP$(m)$ sets the encoding"),
-    "qmaml_deep": ("Q-MAML, deep", r"$\theta=h_W(m)$, MLP front end"),
+    "qmaml_deep": ("LCC, deep", r"$\theta=h_W(m)$, MLP front end"),
     "joint_deep": ("joint, deep", "nowhere, MLP front end"),
     "param_deep": ("param-deep", r"MLP$([x,m])\to$ angles"),
     "classical": ("classical MLP", r"MLP$([x,m])$, no circuit"),
@@ -176,7 +176,7 @@ LHCO_ARMS = {  # arm: (label, where the masses enter)
 
 
 def lhco():
-    """tab_lhco.tex: the LHCO routes study, Q-MAML against every arm at each grid spacing."""
+    """tab_lhco.tex: the LHCO routes study, the Learner-conditioned classifier against every arm at each grid spacing."""
     import glob
     import json
 
