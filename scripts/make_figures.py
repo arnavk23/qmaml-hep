@@ -29,9 +29,13 @@ import numpy as np
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 R = os.path.join(ROOT, "results")
 OUT = os.path.join(ROOT, "figures")
+# LNCS text width is 12.2 cm = 4.8 in; main-text figures are drawn at that width and included at \textwidth,
+# so the font sizes below are the printed sizes (body text 10 pt; figure text 8 pt, never below 7 pt).
+TEXTW = 4.8
 plt.rcParams.update(
     {
-        "font.size": 7,
+        "font.size": 8,
+        "legend.fontsize": 7.5,
         "axes.linewidth": 0.5,
         "xtick.major.width": 0.5,
         "ytick.major.width": 0.5,
@@ -94,7 +98,7 @@ def summary():
 
 def scoreboard(S, split="interp"):
     rows = [k for k in ORDER if f"{k}_{split}_h2" in S]
-    fig, ax = plt.subplots(figsize=(6.3, 0.32 * len(rows) + 0.9))
+    fig, ax = plt.subplots(figsize=(TEXTW, 0.21 * len(rows) + 1.3))
     specs = [
         ("classical", "o", 0.18, "vs best classical"),
         ("warm", "s", -0.18, "vs best warm start"),
@@ -121,16 +125,16 @@ def scoreboard(S, split="interp"):
                 label=lab if y == 0 else None,
             )
         n = S[f"{k}_{split}_h2"]["n_seeds"]
-        ax.text(1.02, y, f"n={n}", transform=ax.get_yaxis_transform(), fontsize=6, va="center", color="0.35")
+        ax.text(1.02, y, f"n={n}", transform=ax.get_yaxis_transform(), fontsize=7, va="center", color="0.35")
     ax.axvline(0, color="k", lw=0.6)
     ax.set_yticks(range(len(rows)))
     ax.set_yticklabels([LABEL[k] for k in rows[::-1]])
     ax.set_xlabel(
         r"$\langle\log_{10}(T_{\mathrm{Q\text{-}MAML}}+1)-\log_{10}(T_{\mathrm{opp}}+1)\rangle$"
-        r"   ($T$ = iterations to $10^{-3}$ relative error; $<0$: Q-MAML faster)"
+        "\n" r"($T$ = iterations to $10^{-3}$ relative error; $<0$: Q-MAML faster)"
     )
     ax.grid(axis="x", color="0.92", lw=0.5)
-    ax.legend(loc="lower center", bbox_to_anchor=(0.5, 1.0), ncol=4, fontsize=6, handletextpad=0.3)
+    ax.legend(loc="lower center", bbox_to_anchor=(0.5, 1.0), ncol=2, handletextpad=0.3, columnspacing=1.0)
     fig.tight_layout()
     fig.savefig(os.path.join(OUT, f"fig_r2_scoreboard_{split}.pdf"))
     plt.close(fig)
@@ -244,7 +248,7 @@ def size_trend(S):
         "D SU(2)": [("D_su2_interp_h2", 4, ""), ("D_su2_q6_interp_h2", 6, ""), ("D_su2_q8_interp_h2", 8, "")],
         "E neutrinos": [("E_neutrino_interp_h2", 4, ""), ("E_neutrino_q6_interp_h2", 6, "")],
     }
-    fig, axes = plt.subplots(1, 3, figsize=(6.8, 2.2), sharey=True)
+    fig, axes = plt.subplots(1, 3, figsize=(TEXTW, 2.4), sharey=True)
     for ax, (name, keys) in zip(axes, fam.items()):
         for key, x, lab in keys:
             if key not in S:
@@ -257,13 +261,14 @@ def size_trend(S):
                 ax.plot([x + off] * 2, c["ci"], color=col, lw=0.9)
                 ax.plot(x + off, c["mean_d"], mk, color=col, ms=4, label=f"vs best {f}" if key == keys[0][0] else None)
             if lab:
-                ax.text(x, -0.95, lab, fontsize=5, ha="center", color="0.35")
+                ax.text(x, -1.0, lab.split("=")[1], fontsize=7, ha="center", va="top", color="0.35")
         ax.axhline(0, color="k", lw=0.5)
-        ax.set_title(name, fontsize=7)
+        ax.set_title(name, fontsize=8)
+        ax.set_ylim(bottom=-1.25)
         ax.set_xlabel("qubits")
         ax.set_xticks([4, 6, 8])
-    axes[0].set_ylabel("mean log10 iteration ratio\n(<0: Q-MAML faster)")
-    axes[0].legend(fontsize=6)
+    axes[0].set_ylabel("mean log$_{10}$ iteration ratio\n($<0$: Q-MAML faster)")
+    axes[0].legend(fontsize=7, handletextpad=0.2)
     fig.tight_layout()
     fig.savefig(os.path.join(OUT, "fig_r2_size.pdf"))
     plt.close(fig)
@@ -416,7 +421,7 @@ TRACK_COL = dict(
 
 def interpolator(S, split="interp"):
     """Initial relative error of Q-MAML against that of the track's best warm start, one point per held-out task."""
-    fig, (a, b) = plt.subplots(1, 2, figsize=(7.0, 2.7), gridspec_kw={"width_ratios": [1.15, 1]})
+    fig, (a, b) = plt.subplots(1, 2, figsize=(TEXTW, 3.5), gridspec_kw={"width_ratios": [1, 1]})
     frac = []
     for k in ORDER:
         key = f"{k}_{split}_h2"
@@ -437,22 +442,25 @@ def interpolator(S, split="interp"):
     a.plot(lim, lim, color="k", lw=0.6)
     a.axhline(TAU, color=C["grey"], ls=":", lw=0.6)
     a.axvline(TAU, color=C["grey"], ls=":", lw=0.6)
-    a.set(xscale="log", yscale="log", xlim=lim, ylim=lim, xlabel="Q-MAML initial relative error",
-          ylabel="best warm start, initial relative error")  # fmt: skip
-    a.text(2e-9, 1e-1, "warm start\nstarts higher", fontsize=6, va="top")
-    a.text(2e-3, 3e-9, "warm start starts lower", fontsize=6)
-    a.legend(fontsize=5.5, ncol=2, loc="upper left", bbox_to_anchor=(1.0, 1.0), handletextpad=0.2, columnspacing=0.5)
+    a.set(xscale="log", yscale="log", xlim=lim, ylim=lim, xlabel="Q-MAML initial rel. error",
+          ylabel="best warm start, initial rel. error")  # fmt: skip
+    a.set_xticks([1e-8, 1e-5, 1e-2])
+    a.set_yticks([1e-8, 1e-5, 1e-2])
+    a.text(2e-9, 1e-1, "warm start\nstarts higher", fontsize=7, va="top")
+    a.text(1.5, 3e-9, "warm start\nstarts lower", fontsize=7, ha="right")
+    fig.legend(*a.get_legend_handles_labels(), fontsize=7, ncol=4, loc="lower center", handletextpad=0.1,
+               columnspacing=0.6)  # fmt: skip
     ks, fs, ns = zip(*frac)
     y = np.arange(len(ks))[::-1]
     b.barh(y, fs, color=[TRACK_COL[k] for k in ks], height=0.65)
     b.axvline(0.5, color="k", lw=0.6, ls="--")
     b.set(yticks=y, yticklabels=[LABEL[k] for k in ks], xlim=(0, 1),
-          xlabel="fraction of held-out tasks where\nthe warm start begins closer")  # fmt: skip
+          xlabel="fraction of tasks where\nthe warm start begins closer")  # fmt: skip
     for yi, f, n in zip(y, fs, ns):
         inside = f > 0.75
-        b.text(f - 0.02 if inside else f + 0.02, yi, f"{f:.0%} (n={n})", va="center", fontsize=5.5,
+        b.text(f - 0.02 if inside else f + 0.02, yi, f"{f:.0%}", va="center", fontsize=7,
                ha="right" if inside else "left", color="white" if inside else "black")  # fmt: skip
-    fig.tight_layout()
+    fig.tight_layout(rect=(0, 0.17, 1, 1))
     fig.savefig(os.path.join(OUT, f"fig_interpolator_{split}.pdf"))
     plt.close(fig)
 
@@ -464,7 +472,7 @@ def cross_platform():
         return
     X = json.load(open(path))
     keys = [k for k in ORDER if f"{k}_interp_h2" in X]
-    fig, axes = plt.subplots(1, 2, figsize=(7.0, 0.42 * len(keys) + 0.9), sharey=True)
+    fig, axes = plt.subplots(1, 2, figsize=(TEXTW, 0.36 * len(keys) + 1.1), sharey=True)
     for ax, fam, title in zip(axes, ("classical", "warm"), ("vs best classical", "vs best warm start")):
         for i, k in enumerate(keys):
             c = X[f"{k}_interp_h2"]["comparisons"][fam]
@@ -477,15 +485,15 @@ def cross_platform():
                 ax.plot([lo, hi], [yi + off] * 2, color=col, lw=1.2)
                 ax.plot(c["mean_d"][j], yi + off, marker=mk, color=col, ms=4,
                         label=("environment 1 (stored)" if j == 0 else "environment 2 (rerun)") if i == 0 else None)  # fmt: skip
-                ax.text(1.02, yi + off, c["verdict"][j][0].upper(), transform=ax.get_yaxis_transform(), fontsize=6,
+                ax.text(1.02, yi + off, c["verdict"][j][0].upper(), transform=ax.get_yaxis_transform(), fontsize=7,
                         va="center", color=col)  # fmt: skip
         ax.axvline(0, color="k", lw=0.6)
-        ax.set_title(title, fontsize=7)
-        ax.set_xlabel("$\\Delta$ = log$_{10}$ iteration ratio (Q-MAML / opponent)")
+        ax.set_title(title, fontsize=8)
+        ax.set_xlabel("$\\Delta$ (log$_{10}$ iteration ratio)")
     axes[0].set_yticks(range(len(keys))[::-1], [LABEL[k] for k in keys])
     handles, labels = axes[0].get_legend_handles_labels()
-    fig.legend(handles, labels, fontsize=6, loc="lower center", ncol=2, frameon=False)
-    fig.tight_layout(rect=(0, 0.07, 1, 1))
+    fig.legend(handles, labels, fontsize=7.5, loc="lower center", ncol=2, frameon=False)
+    fig.tight_layout(rect=(0, 0.08, 1, 1))
     fig.savefig(os.path.join(OUT, "fig_cross_platform.pdf"))
     plt.close(fig)
 
@@ -515,36 +523,35 @@ def lhco_routes():
     if not S:
         return
     opps = list(LHCO_LABEL)
-    fig, (ax, bx) = plt.subplots(1, 2, figsize=(7.0, 3.4), gridspec_kw={"width_ratios": [1.7, 1]})
+    arms = ["qmaml"] + opps
+    short = {"qmaml": "LCC", **{o: LHCO_LABEL[o].split(" (")[0] for o in opps}}
+    short["classical"] = "classical MLP"
+    # one row per arm, shared by both panels (the LCC row is empty on the left: it is the reference there)
+    fig, (ax, bx) = plt.subplots(1, 2, figsize=(TEXTW, 3.3), sharey=True, gridspec_kw={"width_ratios": [1.25, 1]})
     for j, (sp, s) in enumerate(S.items()):
         mk, col = LHCO_SPACING[sp]
         off = (1 - j) * 0.26
         rows = {r["opponent"]: r for r in s["comparisons"]}
-        for i, o in enumerate(opps):
-            r, y = rows[o], len(opps) - 1 - i + off
-            ax.plot([r["lo"], r["hi"]], [y, y], color=col, lw=1.0)
-            ax.plot(r["mean"], y, mk, ms=3.8, color=col, label=f"{sp} GeV grid" if i == 0 else None)
-            ax.text(1.01 + 0.035 * j, y, r["verdict"][0].upper(), transform=ax.get_yaxis_transform(), fontsize=5.5, va="center",
-                    color=col)  # fmt: skip
-        arms = ["qmaml"] + opps
         for i, a in enumerate(arms):
-            g, y = s["gap_to_oracle_bdt"][a], len(arms) - 1 - i + off
+            y = len(arms) - 1 - i + off
+            if a != "qmaml":
+                r = rows[a]
+                ax.plot([r["lo"], r["hi"]], [y, y], color=col, lw=1.0)
+                ax.plot(r["mean"], y, mk, ms=3.8, color=col, label=f"{sp} GeV grid" if i == 1 else None)
+                ax.text(1.01 + 0.06 * j, y, r["verdict"][0].upper(), transform=ax.get_yaxis_transform(), fontsize=7,
+                        va="center", color=col)  # fmt: skip
+            g = s["gap_to_oracle_bdt"][a]
             bx.plot([g["lo"], g["hi"]], [y, y], color=col, lw=1.0)
             bx.plot(g["mean"], y, mk, ms=3.8, color=col)
     ax.axvline(0, color="k", lw=0.6)
-    ax.set_yticks(range(len(opps))[::-1], [LHCO_LABEL[o] for o in opps])
-    ax.set_xlabel("LCC $-$ arm: mean $\\Delta\\log_{10}R$ ($>0$: LCC rejects more background)")
+    ax.set_yticks(range(len(arms))[::-1], [short[a] for a in arms])
+    ax.set_xlabel("LCC $-$ arm, $\\Delta\\log_{10}R$\n($>0$: LCC rejects more)")
     ax.grid(axis="x", color="0.92", lw=0.5)
-    ax.legend(loc="lower center", bbox_to_anchor=(0.5, 1.0), ncol=3, fontsize=6, handletextpad=0.3)
+    fig.legend(*ax.get_legend_handles_labels(), loc="upper center", ncol=3, handletextpad=0.3)
     bx.axvline(0, color="k", lw=0.6)
-    bx.set_yticks(
-        range(len(opps) + 1)[::-1],
-        ["LCC"]
-        + [LHCO_LABEL[o].split(" (")[0].replace("classical parameterised MLP", "classical MLP") for o in opps],
-    )
     bx.set_xlabel("gap to per-point BDT\n(arm $-$ BDT, $\\Delta\\log_{10}R$)")
     bx.grid(axis="x", color="0.92", lw=0.5)
-    fig.tight_layout()
+    fig.tight_layout(rect=(0, 0, 1, 0.93), w_pad=1.8)
     fig.savefig(os.path.join(OUT, "fig_lhco_routes.pdf"))
     plt.close(fig)
 

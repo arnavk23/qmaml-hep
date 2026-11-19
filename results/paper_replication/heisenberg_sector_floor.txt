@@ -1,0 +1,24 @@
+[-2.8, -2.5, -0.7] E0 -42.4333 floor_err 3.41e-02 qmaml 4.6e-02 zero 1.2e+00 pi 1.6e-01 uniform 4.2e-02 gaussian 4.3e-02
+[2.0, -0.6, 1.8] E0 -30.9649 floor_err 2.37e-02 qmaml 2.7e-02 zero 3.6e-01 pi 2.9e-02 uniform 2.6e-02 gaussian 2.9e-02
+[-1.1, -1.6, 1.8] E0 -20.5295 floor_err 7.39e-04 qmaml 1.9e-03 zero 3.6e-02 pi 1.5e-03 uniform 2.0e-03 gaussian 1.9e-03
+[2.3, -2.6, -2.7] E0 -30.0010 floor_err 2.01e-04 qmaml 1.5e-03 zero 2.0e+00 pi 6.9e-02 uniform 6.3e-02 gaussian 2.4e-03
+[1.0, -1.0, 0.4] E0 -16.7622 floor_err 3.36e-02 qmaml 4.1e-02 zero 7.4e-01 pi 3.9e-02 uniform 4.5e-02 gaussian 4.3e-02
+[-2.1, 2.2, -0.3] E0 -29.9321 floor_err 3.20e-02 qmaml 3.4e-02 zero 1.1e+00 pi 3.7e-02 uniform 4.3e-02 gaussian 6.8e-02
+[2.4, 1.8, 1.3] E0 -26.8548 floor_err 4.48e-02 qmaml 5.4e-02 zero 4.7e-01 pi 4.8e-02 uniform 5.0e-02 gaussian 5.4e-02
+[-1.6, 1.6, -2.7] E0 -29.7000 floor_err 3.59e-15 qmaml 5.6e-06 zero 2.0e+00 pi 1.5e-01 uniform 1.5e-01 gaussian 3.1e-04
+[0.4, -0.6, 3.0] E0 -34.0786 floor_err 9.76e-05 qmaml 1.7e-04 zero 3.2e-02 pi 1.9e-04 uniform 2.0e-04 gaussian 2.5e-04
+[-1.8, 2.7, -2.5] E0 -30.7727 floor_err 1.61e-02 qmaml 2.2e-02 zero 1.9e+00 pi 7.5e-02 uniform 3.6e-02 gaussian 6.3e-02
+[0.8, 0.5, 2.4] E0 -26.5269 floor_err 4.45e-07 qmaml 8.3e-06 zero 4.8e-03 pi 7.6e-06 uniform 1.4e-05 gaussian 1.8e-05
+[-1.2, 2.5, 1.0] E0 -33.6431 floor_err 3.77e-02 qmaml 3.9e-02 zero 6.7e-01 pi 4.4e-02 uniform 4.3e-02 gaussian 4.5e-02
+[2.4, -1.8, 1.6] E0 -40.0105 floor_err 3.12e-02 qmaml 3.7e-02 zero 5.6e-01 pi 3.8e-02 uniform 3.9e-02 gaussian 3.8e-02
+[2.7, -2.8, -0.8] E0 -36.3973 floor_err 3.02e-02 qmaml 3.8e-02 zero 1.2e+00 pi 3.6e-02 uniform 3.9e-02 gaussian 4.0e-02
+[0.8, -2.4, 0.1] E0 -27.5038 floor_err 5.98e-02 qmaml 6.4e-02 zero 9.6e-01 pi 6.3e-02 uniform 6.3e-02 gaussian 6.3e-02
+[0.8, 1.6, 2.6] E0 -29.5092 floor_err 1.47e-04 qmaml 2.8e-04 zero 3.1e-02 pi 2.9e-04 uniform 3.3e-04 gaussian 4.2e-04
+floor<1e-3: 6 /16; median floor err 0.027 max 0.0598
+qmaml within 1e-3 rel of floor: 4 reach: 4 reach where floor ok: 4
+zero within 1e-3 rel of floor: 0 reach: 0 reach where floor ok: 0
+pi within 1e-3 rel of floor: 4 reach: 3 reach where floor ok: 3
+uniform within 1e-3 rel of floor: 3 reach: 3 reach where floor ok: 3
+gaussian within 1e-3 rel of floor: 4 reach: 4 reach where floor ok: 4
+
+[exited with code 0]

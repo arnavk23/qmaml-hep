@@ -93,6 +93,54 @@ def verdicts(split="interp"):
         "\n\\midrule\n" + "\n".join(rows) + "\n\\botrule\n\\end{tabular}\n"
     )
     open(os.path.join(OUT, f"tab_verdicts_{split}.tex"), "w", encoding="utf-8").write(tex)
+    verdicts_compact(split)
+
+
+def _one(x, opp=True):
+    mark = {"win": "W", "loss": "L", "tie": "T"}[x["verdict"]]
+    star = r"$^\ast$" if x.get("p_holm", 1) < 0.05 else ""
+    fb = r"$^\dagger$" if x["metric"] != "log10_iters_to_tau" else ""
+    o = f"{SNAME[x['opponent']]} " if opp else ""
+    return f"{o}${x['mean_d']:+.2f}$ [${x['ci'][0]:+.2f},{x['ci'][1]:+.2f}$] {mark}{star}{fb}"
+
+
+def _cell2(c, f):
+    """Two-line cell: full Q-MAML over compute-matched Q-MAML against the same opponent class."""
+    if f not in c:
+        return "--"
+    top = _one(c[f])
+    if f + "|cm" in c:
+        m = c[f + "|cm"]
+        bot = r"\textit{m:} " + _one(m, opp=m["opponent"] != c[f]["opponent"])
+    else:
+        bot = r"\textit{m:} --"
+    return rf"\begin{{tabular}}[t]{{@{{}}l@{{}}}}{top}\\\relax {bot}\end{{tabular}}"
+
+
+def verdicts_compact(split="interp"):
+    """Same content as verdicts() for single-column (LNCS) pages: compute-matched under full, seeds in caption."""
+    S = _summary()
+    rows = []
+    seeds = set()
+    for k in TRACK_ORDER:
+        key = f"{k}_{split}_h2"
+        if key not in S:
+            continue
+        v = S[key]
+        seeds.add(v["n_seeds"])
+        sc = v["schemes"]
+        c = v["comparisons"]
+        rows.append(
+            f"{k[0]} & {NAME[k]} & {sc['qmaml']['frac_reached']:.2f} & "
+            f"{fmt_e(sc['qmaml']['geo_mean_final_err'])} & {_cell2(c, 'classical')} & {_cell2(c, 'warm')} \\\\[2pt]"
+        )
+    assert len(seeds) == 1, "compact table assumes one seed count; use verdicts()"
+    tex = (
+        "\\setlength{\\tabcolsep}{3pt}\\begin{tabular}{@{}l>{\\raggedright\\arraybackslash}p{2.3cm}cc@{\\hspace{6pt}}ll@{}}\n\\toprule\n"
+        r"Tr. & System & reach & $\varepsilon_B$ & vs best classical & vs best warm start \\"
+        "\n\\midrule\n" + "\n".join(rows) + "\n\\botrule\n\\end{tabular}\n"
+    )
+    open(os.path.join(OUT, f"tab_verdicts_{split}_compact.tex"), "w", encoding="utf-8").write(tex)
 
 
 def compute_table():

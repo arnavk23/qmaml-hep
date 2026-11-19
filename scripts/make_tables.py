@@ -132,8 +132,10 @@ def design():
     import qmaml_hep.tracks as U
 
     rows = []
+    qubits = []
     for k in TRACK_ORDER:
         tr = U.TRACKS[k]()
+        qubits.append(tr["qubits"])
         c = tr["cfg"]
         tasks = tr["sample"](4, 0)
         d = len(tr["desc"](tasks[0]))
@@ -152,6 +154,16 @@ def design():
         "\n\\midrule\n" + body + "\n\\botrule\n\\end{tabular}\n"
     )
     open(os.path.join(OUT, "tab_design.tex"), "w", encoding="utf-8").write(tex)
+    # Upright single-column (LNCS) variant: same rows without dim H (= 2^n); system and task range wrap.
+    crow = [r.replace(f" & $2^{{{n}}}$ & ", " & ", 1) for r, n in zip(rows, qubits)]
+    tex = (
+        r"\setlength{\tabcolsep}{3pt}\begin{tabular}{@{}l>{\raggedright\arraybackslash}p{2.1cm}clccc"
+        r">{\raggedright\arraybackslash}p{3.0cm}cccc@{}}"
+        "\n\\toprule\n"
+        r"Tr. & System & $n$ & Ansatz & $L$ & $P$ & $d$ & Task range (uniform) & train/test & $B$ & $\eta'$ & epochs/$\eta$ \\"
+        "\n\\midrule\n" + "\n".join(c + "[2pt]" for c in crow) + "\n\\botrule\n\\end{tabular}\n"
+    )
+    open(os.path.join(OUT, "tab_design_compact.tex"), "w", encoding="utf-8").write(tex)
     rows = [f"{k[0]} & {NAME[k]} & {PHYSICS[k][0]} & {PHYSICS[k][1]} \\\\" for k in TRACK_ORDER]
     tex = (
         r"\begin{tabular}{@{}llp{0.34\textwidth}p{0.35\textwidth}@{}}"
@@ -160,6 +172,16 @@ def design():
         "\n\\midrule\n" + "\n".join(rows) + "\n\\botrule\n\\end{tabular}\n"
     )
     open(os.path.join(OUT, "tab_physics.tex"), "w", encoding="utf-8").write(tex)
+    # Upright single-column (LNCS) variant: ragged-right text columns with visible gutters.
+    rr = r">{\raggedright\arraybackslash}"
+    tex = (
+        r"\setlength{\tabcolsep}{4pt}\begin{tabular}{@{}l" + rr + "p{2.2cm}" + rr + r"p{0.355\linewidth}"
+        + rr + r"p{0.355\linewidth}@{}}"
+        "\n\\toprule\n"
+        r"Tr. & System & Question answered by the ground state & Verification before use \\"
+        "\n\\midrule\n" + "\n".join(r + "[2pt]" for r in rows) + "\n\\botrule\n\\end{tabular}\n"
+    )
+    open(os.path.join(OUT, "tab_physics_compact.tex"), "w", encoding="utf-8").write(tex)
 
 
 LHCO_ARMS = {  # arm: (label, where the masses enter)
